@@ -3,427 +3,459 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Loading...</title>
+<title>.</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: 'Courier New', -apple-system, monospace;
-    background: #000; color: #0f0; min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 16px; overflow-x: hidden;
-    transition: background 0.5s;
+    font-family: 'Courier New', monospace;
+    background: #000; color: #f00;
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+    padding: 10px; overflow-x: hidden;
   }
-  .glitch { animation: glitch 0.3s infinite; }
-  @keyframes glitch {
-    0% { transform: translate(2px, 1px); }
-    25% { transform: translate(-2px, -1px); }
-    50% { transform: translate(-1px, 2px); }
-    75% { transform: translate(1px, -2px); }
-    100% { transform: translate(0, 0); }
-  }
-  .container { width: 100%; max-width: 400px; }
+  .container { width: 100%; max-width: 420px; }
   .card {
-    background: rgba(0,255,0,0.03);
-    border: 1px solid rgba(0,255,0,0.3);
-    border-radius: 10px; padding: 18px; margin: 12px 0;
+    border: 1px solid #300; border-radius: 6px; padding: 16px; margin: 10px 0;
+    background: rgba(40,0,0,0.6);
   }
-  .card.pink { border-color: #f0f; background: rgba(255,0,255,0.05); }
-  .card.blue { border-color: #0ff; background: rgba(0,255,255,0.05); }
-  .card.yellow { border-color: #ff0; background: rgba(255,255,0,0.05); }
+  .card.glitch-box { border-color: #600; animation: glitchBox 4s infinite; }
+  @keyframes glitchBox {
+    0%,90%,100% { transform: none; opacity: 1; }
+    92% { transform: translate(-3px, 2px); opacity: 0.8; }
+    94% { transform: translate(3px, -1px); opacity: 1; }
+    96% { transform: translate(-1px, -2px); opacity: 0.9; }
+    98% { transform: translate(2px, 1px); }
+  }
   .btn {
-    display: block; width: 100%; padding: 15px;
-    border: 2px solid #0f0; background: transparent;
-    color: #0f0; font-family: inherit; font-size: 16px;
-    border-radius: 30px; margin: 10px 0; cursor: pointer;
-    transition: all 0.2s; letter-spacing: 1px;
+    display: block; width: 100%; padding: 14px; margin: 8px 0;
+    border: 1px solid #500; background: rgba(80,0,0,0.4);
+    color: #f00; font-family: inherit; font-size: 15px;
+    border-radius: 4px; cursor: pointer; letter-spacing: 2px;
+    transition: all 0.15s;
   }
-  .btn:active { background: #0f0; color: #000; transform: scale(0.97); }
-  .btn.pink { border-color: #f0f; color: #f0f; }
-  .btn.pink:active { background: #f0f; color: #000; }
-  .btn.blue { border-color: #0ff; color: #0ff; }
-  .btn.blue:active { background: #0ff; color: #000; }
-  .btn.yellow { border-color: #ff0; color: #ff0; }
-  .btn.yellow:active { background: #ff0; color: #000; }
-  .btn.huge { padding: 22px; font-size: 22px; font-weight: bold; }
+  .btn:active { background: #600; border-color: #f00; }
+  .btn:disabled { opacity: 0.3; pointer-events: none; }
   .bar {
-    width: 100%; height: 8px; background: rgba(0,255,0,0.1);
-    border-radius: 4px; overflow: hidden; margin: 10px 0;
+    width: 100%; height: 6px; background: rgba(255,0,0,0.1);
+    border-radius: 3px; overflow: hidden; margin: 8px 0;
   }
-  .bar-inner {
-    height: 100%; background: #0f0; border-radius: 4px;
-    width: 0%; transition: width 0.5s;
-  }
-  .bar-inner.pink { background: #f0f; }
-  .center { text-align: center; }
-  .flex-row { display: flex; gap: 10px; }
-  .flex-row .btn { flex: 1; }
+  .bar-fill { height: 100%; background: #f00; width: 0%; transition: width 0.4s; }
   .hidden { display: none !important; }
-  .shake { animation: shake 0.5s ease; }
-  @keyframes shake {
+  .center { text-align: center; }
+  .blink { animation: blinker 0.8s step-end infinite; }
+  @keyframes blinker { 50% { opacity: 0; } }
+  .flicker { animation: flicker 0.15s infinite; }
+  @keyframes flicker {
+    0%,100% { opacity: 1; }
+    41% { opacity: 0.8; }
+    43% { opacity: 0.3; }
+    47% { opacity: 1; }
+    67% { opacity: 0.6; }
+    69% { opacity: 0.1; }
+  }
+  .shake { animation: shaker 0.3s ease 3; }
+  @keyframes shaker {
     0%,100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
   }
-  .zoom-in { animation: zoomIn 0.5s ease; }
-  @keyframes zoomIn {
-    0% { transform: scale(0); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+  .zoom { animation: zoomer 0.6s ease; }
+  @keyframes zoomer {
+    0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
+    60% { transform: scale(1.1) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
   }
-  .fade-in { animation: fadeIn 0.8s ease; }
-  @keyframes fadeIn {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
+  .glitch-txt { animation: glitchText 2s infinite; }
+  @keyframes glitchText {
+    0%,90%,100% { transform: none; }
+    91% { transform: skewX(2deg) translateX(-2px); }
+    93% { transform: skewX(-1deg) translateX(2px); }
+    95% { transform: skewX(1deg); }
   }
-  .big { font-size: 50px; }
-  .huge { font-size: 70px; }
-  .em { font-size: 18px; }
-  .dim { opacity: 0.5; font-size: 12px; }
-  .rainbow {
-    background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .typewriter {
-    overflow: hidden; white-space: nowrap;
-    border-right: 2px solid #0f0;
-    animation: typing 2s steps(30), blink 0.5s step-end infinite;
-  }
-  @keyframes typing {
-    from { width: 0; }
-    to { width: 100%; }
-  }
-  @keyframes blink {
-    50% { border-color: transparent; }
-  }
-  .fake-options {
-    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
-  }
-  .fake-option {
-    padding: 10px 16px; border: 1px solid #333;
-    border-radius: 20px; font-size: 13px; cursor: pointer;
-    color: #aaa; background: rgba(255,255,255,0.02);
-    transition: all 0.2s;
-  }
-  .fake-option:active, .fake-option.selected {
-    border-color: #0f0; color: #0f0; background: rgba(0,255,0,0.1);
-  }
-  .emoji-row { font-size: 40px; letter-spacing: 8px; }
+  .red { color: #f00; }
+  .white { color: #ccc; }
+  .dim { color: #600; font-size: 12px; }
+  .fz14 { font-size: 14px; }
+  .fz18 { font-size: 18px; }
+  .fz22 { font-size: 22px; }
+  .fz28 { font-size: 28px; }
+  .fz36 { font-size: 36px; }
+  .mb8 { margin-bottom: 8px; }
+  .mb16 { margin-bottom: 16px; }
+  .l2 { line-height: 2; }
 </style>
 </head>
 <body>
 
 <div class="container" id="app"></div>
+<div id="overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:999;pointer-events:none;opacity:0;transition:opacity 0.1s;"></div>
 
 <script>
-(function() {
-  var root = document.getElementById('app');
-  var userName = '';
+var root = document.getElementById('app');
+var overlay = document.getElementById('overlay');
+var userName = '';
 
-  function h(t) { root.innerHTML = t; }
+function flash() {
+  overlay.style.opacity = '1';
+  setTimeout(function() { overlay.style.opacity = '0'; }, 80);
+}
+function crashFlash(count, speed) {
+  if (count <= 0) return;
+  overlay.style.opacity = (count % 2) ? '1' : '0';
+  setTimeout(function() { crashFlash(count - 1, speed); }, speed);
+}
 
-  // ====== S1: 假系统启动 ======
-  function s1() {
-    h(`
-      <div class="card center fade-in">
-        <p class="dim">SYSTEM BOOT v9.9.9</p>
-        <p class="em">████████████████████</p>
-        <p class="dim">INITIALIZING...</p>
-      </div>
-    `);
-    setTimeout(s2, 2000);
-  }
+function h(t) { root.innerHTML = t; }
 
-  // ====== S2: 假权限请求 ======
-  function s2() {
-    h(`
-      <div class="card center fade-in">
-        <div class="emoji-row">🔬🧬🔭</div>
-        <p class="em" style="margin:10px 0;">AI 深度人格检测系统</p>
-        <p class="dim">需要获取以下权限以继续：</p>
-      </div>
-      <div class="card fade-in">
-        <p class="dim" style="color:#0f0;">☑ 读取脑电波数据</p>
-        <p class="dim" style="color:#0f0;">☑ 扫描今日运势</p>
-        <p class="dim" style="color:#0f0;">☑ 连接宇宙数据库</p>
-        <p class="dim" style="color:#0f0;">☑ 接入5G/6G/7G网络</p>
-        <p class="dim blink">☐ 征求本人同意...</p>
-      </div>
-      <button class="btn btn huge" onclick="clickAgree()">
-        我同意以上所有条款
-      </button>
-      <button class="btn btn pink" onclick="clickReject()">
-        我想拒绝
-      </button>
-    `);
-  }
+// S1: 假警告
+function s1() {
+  h(`
+    <div class="card glitch-box center">
+      <p class="fz28 mb8">⚠️</p>
+      <p class="fz18 red mb8 glitch-txt">WARNING</p>
+      <p class="fz14 white">检测到未知设备接入</p>
+      <p class="fz14 white">安全协议已触发</p>
+      <p class="dim blink">SYS_ALERT_0x0001</p>
+    </div>
+    <button class="btn" onclick="s2()">▸ 查看详情</button>
+    <button class="btn" onclick="s2()">▸ 忽略警告（不推荐）</button>
+  `);
+}
 
-  window.clickAgree = function() {
-    var btn = document.querySelector('.btn.huge');
-    btn.textContent = '✅ 已同意';
-    btn.style.background = '#0f0'; btn.style.color = '#000';
-    setTimeout(s3, 800);
-  };
+// S2: 假授权协议
+function s2() {
+  flash();
+  h(`
+    <div class="card center">
+      <p class="red mb8">[ 系统安全协议 v6.6.6 ]</p>
+      <p class="dim l2 mb8">
+        根据《网络安全法》第 404 条<br>
+        本设备需进行强制安全审查<br>
+        继续即表示你同意以下条款：
+      </p>
+      <p class="dim l2" style="color:#500;">
+        1. 允许读取设备灵魂数据<br>
+        2. 允许AI扫描所有脑电波<br>
+        3. 允许接入赛博冥界数据库<br>
+        4. 放弃对本系统的任何反抗
+      </p>
+    </div>
+    <div class="card center" style="border-color:#500;">
+      <p class="fz28 blink red">🔴</p>
+      <p class="fz14 white">威胁等级：<span class="red blink">CRITICAL</span></p>
+    </div>
+    <button class="btn" onclick="s3()">▸ 同意并继续</button>
+  `);
+}
 
-  window.clickReject = function() {
-    var btn = document.querySelector('.btn.pink');
-    btn.textContent = '😈 拒绝无效，自动同意';
-    btn.style.background = '#f0f'; btn.style.color = '#fff';
-    document.querySelector('.btn.huge').textContent = '✅ 强制已同意';
-    document.querySelector('.btn.huge').style.background = '#0f0';
-    document.querySelector('.btn.huge').style.color = '#000';
-    setTimeout(s3, 800);
-  };
+// S3: 假扫描
+function s3() {
+  h(`
+    <div class="card center">
+      <p class="red blink mb8">▌▌▌ 正在扫描设备 ▌▌▌</p>
+      <div class="bar"><div class="bar-fill" id="b1"></div></div>
+      <p class="dim" id="t1">初始化...</p>
+    </div>
+  `);
 
-  // ====== S3: 假扫描动画 ======
-  function s3() {
-    h(`
-      <div class="card center fade-in">
-        <p class="em blink">🛰️ 正在全宇宙范围扫描...</p>
-        <div class="bar"><div class="bar-inner" id="scanBar"></div></div>
-        <p class="dim" id="scanText">初始化量子引擎...</p>
-      </div>
-    `);
-    var steps = [
-      [20, '调谐量子频率...'],
-      [45, '接入银河系数据库...'],
-      [60, '破解 DNA 双螺旋...'],
-      [75, '深度学习你的午饭记录...'],
-      [88, '检索外星文明档案...'],
-      [95, 'AI正在疯狂分析...'],
-      [100, '✅ 扫描完成！数据异常丰富！'],
+  var jobs = [
+    [25, '读取联系人...', '发现 666 个未知实体'],
+    [45, '扫描相册...', '检测到 233 张表情包'],
+    [65, '分析通信记录...', '拦截到 999 条神秘信号'],
+    [82, '检索浏览器历史...', '发现深夜搜索记录 404 条'],
+    [94, '破解生物特征...', 'DNA 样本已采集'],
+    [100, '最终分析中...', '结果异常——'],
+  ];
+
+  jobs.forEach(function(j, i) {
+    setTimeout(function() {
+      document.getElementById('b1').style.width = j[0] + '%';
+      document.getElementById('t1').textContent = j[1];
+      if (j[2]) {
+        setTimeout(function() {
+          document.getElementById('t1').textContent = j[2];
+        }, 300);
+      }
+    }, i * 900);
+  });
+  setTimeout(s4, jobs.length * 900 + 800);
+}
+
+// S4: 输入名字
+function s4() {
+  flash(); flash();
+  h(`
+    <div class="card center" style="border-color:#600;">
+      <p class="fz18 red blink mb8">⚠️ 发现高危异常 ⚠️</p>
+      <p class="fz14 white mb16">该系统检测到一名「高危人员」<br>请确认目标身份：</p>
+      <input id="inp" type="text" placeholder="输入目标姓名..."
+        style="width:100%;padding:12px;background:transparent;border:1px solid #500;
+        color:#f00;font-size:16px;font-family:inherit;text-align:center;outline:none;border-radius:4px;">
+    </div>
+    <button class="btn" onclick="subName()">▸ 确认目标</button>
+  `);
+  var inp = document.getElementById('inp');
+  if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') subName(); });
+}
+window.subName = function() {
+  userName = document.getElementById('inp').value || '未知目标';
+  if (userName.length > 20) userName = userName.slice(0, 20);
+  s5();
+};
+
+// S5: 假数据泄露展示
+function s5() {
+  flash();
+  var fakeTime = new Date().toLocaleTimeString('zh-CN', {hour12: false});
+  var fakeIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
+  h(`
+    <div class="card center flicker" style="border-color:#700;">
+      <p class="fz22 red mb8">🔴 BREACHED 🔴</p>
+      <p class="white fz14 l2">
+        目标：[ <span class="red">${userName}</span> ]<br>
+        入侵时间：${fakeTime}<br>
+        IP地址：${fakeIP}<br>
+        设备指纹：已获取<br>
+        数字灵魂：已捕获<br>
+      </p>
+    </div>
+    <div class="card center">
+      <p class="red mb8">[ 正在窃取以下数据... ]</p>
+      <p class="dim l2">
+        ▓▓▓▓▓▓▓▓▓▓ 聊天记录 100%<br>
+        ▓▓▓▓▓▓▓▓▓▓ 浏览器历史 100%<br>
+        ▓▓▓▓▓▓▓▓▓▓ 深夜动态 100%<br>
+        ▓▓▓▓▓▓▓▓▓▓ 大脑内存 100%<br>
+      </p>
+    </div>
+    <button class="btn" onclick="s6()">▸ 查看窃取结果</button>
+  `);
+}
+
+// S6: 阴间诊断
+function s6() {
+  crashFlash(8, 120);
+  setTimeout(function() {
+    var diagnoses = [
+      ['精神状况', '极度不稳定', '建议立刻休息（但没用）'],
+      ['社交人格', '互联网抽象型', '线上线下判若两人'],
+      ['脑回路', '量子纠缠态', '连你自己都不知道在想啥'],
+      ['语言系统', '已崩溃', '只会发哈哈哈和表情包'],
+      ['睡眠质量', '不存在', '凌晨3点是你最清醒的时刻'],
+      ['精神状态', '遥遥领先', '#精神状态# 已成为你的标签'],
+      ['记忆能力', '选择性失忆', '记得十年前尴尬事，忘了昨天吃了啥'],
+      ['表情包库存', '溢出', '你手机里 90% 都是表情包'],
+      ['抽象指数', '超越测量上限', '仪器已过载烧毁'],
     ];
-    steps.forEach(function(s, i) {
-      setTimeout(function() {
-        document.getElementById('scanBar').style.width = s[0] + '%';
-        document.getElementById('scanText').textContent = s[1];
-      }, i * 700);
-    });
-    setTimeout(s4, steps.length * 700 + 600);
-  }
+    var selected = diagnoses.sort(function() { return Math.random() - 0.5; }).slice(0, 5);
 
-  // ====== S4: 灵魂拷问选择题 ======
-  function s4() {
+    var rows = selected.map(function(d) {
+      return '<p class="white fz14">' + d[0] + '：<span class="red">' + d[1] + '</span><br><span class="dim">' + d[2] + '</span></p>';
+    }).join('<br>');
+
     h(`
-      <div class="card center fade-in">
-        <p class="em">🤔 灵魂第一问</p>
-        <p class="dim">请诚实作答（撒谎会被AI识破）</p>
+      <div class="card" style="border-color:#600;">
+        <p class="fz18 red center mb16 blink">▌ ${userName} · 深度检测报告 ▌</p>
+        ${rows}
       </div>
-      <div class="card blue fade-in">
-        <p class="em">深夜睡不着时你在想什么？</p>
+      <div class="card center" style="border-color:#400;">
+        <p class="fz14 white mb8">综合评定：</p>
+        <p class="fz22 red glitch-txt">⚠️ 高危抽象个体 ⚠️</p>
+        <p class="dim">建议立即远离正常人群</p>
+        <p class="dim">威胁等级：<span class="red blink">SSS+</span></p>
       </div>
-      <button class="btn blue" onclick="q1pick(0)">🌌 宇宙的尽头是什么</button>
-      <button class="btn blue" onclick="q1pick(1)">🍔 明天早上吃啥</button>
-      <button class="btn blue" onclick="q1pick(2)">🧠 我刚刚是不是说错话了</button>
-      <button class="btn blue" onclick="q1pick(3)">🎮 刚才那局队友太菜了</button>
+      <button class="btn" onclick="s7()">▸ 进入下一阶段</button>
     `);
-  }
+  }, 1200);
+}
 
-  window.q1pick = function(n) {
-    var btns = document.querySelectorAll('.btn.blue');
-    btns.forEach(function(b, i) {
-      b.disabled = true;
-      if (i === n) { b.style.background = '#0ff'; b.style.color = '#000'; }
-      else b.style.opacity = '0.3';
-    });
-    setTimeout(s5, 600);
-  };
-
-  // ====== S5: 第二问 ======
-  function s5() {
+// S7: 多选项灵魂拷问
+function s7() {
+  h(`
+    <div class="card center">
+      <p class="red mb8">[ 灵魂审讯程序已启动 ]</p>
+      <p class="fz14 white">以下问题必须作答<br>撒谎将被系统标记为「嘴硬」</p>
+    </div>
+    <div class="card">
+      <p class="fz14 white mb8">Q1：凌晨三点，你在做什么？</p>
+    </div>
+    <button class="btn" onclick="pick('q1a')">A. 刷视频刷到精神恍惚</button>
+    <button class="btn" onclick="pick('q1b')">B. 思考宇宙和人生的尽头</button>
+    <button class="btn" onclick="pick('q1c')">C. 在群里发癫</button>
+    <button class="btn" onclick="pick('q1d')">D. 以上全部</button>
+  `);
+}
+window.pick = function(opt) {
+  var btns = document.querySelectorAll('.btn');
+  btns.forEach(function(b) { b.disabled = true; });
+  flash();
+  setTimeout(function() {
     h(`
-      <div class="card center fade-in">
-        <p class="em">🤔 灵魂第二问</p>
+      <div class="card center">
+        <p class="red mb8">[ Q1 已完成 ]</p>
+        <p class="dim">答案已记录</p>
+        <p class="dim blink">AI分析中...</p>
       </div>
-      <div class="card pink fade-in">
-        <p class="em">你觉得自己是什么类型的生物？</p>
+      <div class="card">
+        <p class="fz14 white mb8">Q2：看到这条消息时你是什么表情？</p>
       </div>
-      <button class="btn pink" onclick="q2pick(0)">🦄 彩虹独角兽</button>
-      <button class="btn pink" onclick="q2pick(1)">👽 伪装成人类的猫</button>
-      <button class="btn pink" onclick="q2pick(2)">🧌 深夜上网小精灵</button>
-      <button class="btn pink" onclick="q2pick(3)">🐒 纯血吗喽</button>
+      <button class="btn" onclick="pick2('q2a')">A. 😨</button>
+      <button class="btn" onclick="pick2('q2b')">B. 😱</button>
+      <button class="btn" onclick="pick2('q2c')">C. 🤡</button>
+      <button class="btn" onclick="pick2('q2d')">D. 面无表情但内心波涛汹涌</button>
     `);
-  }
-
-  window.q2pick = function(n) {
-    var btns = document.querySelectorAll('.btn.pink');
-    btns.forEach(function(b, i) {
-      b.disabled = true;
-      if (i === n) { b.style.background = '#f0f'; b.style.color = '#fff'; }
-      else b.style.opacity = '0.3';
-    });
-    setTimeout(s6, 600);
-  };
-
-  // ====== S6: 第三问 (填空) ======
-  function s6() {
+  }, 600);
+};
+window.pick2 = function(opt) {
+  var btns = document.querySelectorAll('.btn');
+  btns.forEach(function(b) { b.disabled = true; });
+  flash(); flash();
+  setTimeout(function() {
     h(`
-      <div class="card center fade-in">
-        <p class="em">🤔 灵魂终极问</p>
+      <div class="card center" style="border-color:#700;">
+        <p class="fz28 red mb8">⚠️</p>
+        <p class="fz14 white">你已通过所有测试</p>
+        <p class="fz14 white">但——</p>
+        <p class="fz18 red glitch-txt blink">系统不想放过你</p>
       </div>
-      <div class="card yellow fade-in">
-        <p class="em">请输入你的名字（真名可加分）：</p>
-        <input id="nameInput" type="text" placeholder="在此输入..."
-          style="width:100%;padding:12px;background:transparent;border:1px solid #ff0;
-          color:#ff0;font-size:18px;font-family:inherit;border-radius:10px;text-align:center;
-          margin-top:10px;outline:none;">
-      </div>
-      <button class="btn yellow" onclick="submitName()">🔮 确认并开始终极分析</button>
+      <button class="btn" onclick="s8()">▸ 继续（无法逃跑）</button>
     `);
-    document.getElementById('nameInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') submitName();
-    });
-  }
+  }, 600);
+};
 
-  window.submitName = function() {
-    userName = document.getElementById('nameInput').value || '神秘人';
-    s7();
-  };
-
-  // ====== S7: 假严肃分析 ======
-  function s7() {
+// S8: 假崩溃
+function s8() {
+  crashFlash(12, 90);
+  document.body.style.background = '#0a0000';
+  setTimeout(function() {
     h(`
-      <div class="card center fade-in">
-        <div class="emoji-row">🧬🔬🧪</div>
-        <p class="em blink">DNA + AI + 量子 三重分析中</p>
-        <p class="dim">目标：${userName}</p>
+      <div class="card center shake" style="border-color:#800;">
+        <p class="fz36 red mb8">☠</p>
+        <p class="fz18 red glitch-txt">SYSTEM CORRUPTED</p>
+        <p class="dim">0x000000F4</p>
+        <p class="dim">KERNEL_DATA_INPAGE_ERROR</p>
+        <p class="dim blink">物理内存转储中...</p>
       </div>
-      <div class="card fade-in">
-        <div class="bar"><div class="bar-inner pink" id="barA"></div></div>
-        <p class="dim">基因序列对比中... <span id="txtA"></span></p>
-        <div class="bar" style="margin-top:10px;"><div class="bar-inner" id="barB"></div></div>
-        <p class="dim">脑电波频谱分析... <span id="txtB"></span></p>
-        <div class="bar" style="margin-top:10px;"><div class="bar-inner pink" id="barC"></div></div>
-        <p class="dim">多维宇宙平行人格检索... <span id="txtC"></span></p>
-        <div class="bar" style="margin-top:10px;"><div class="bar-inner" id="barD"></div></div>
-        <p class="dim">社交媒体数字脚印追踪... <span id="txtD"></span></p>
+      <div class="card flicker" style="border-color:#600;">
+        <p class="fz14 white center">
+          系统检测到<br>
+          <span class="red fz18">${userName}</span><br>
+          的数字灵魂与正常人类不兼容<br><br>
+          <span class="red">建议：</span><br>
+          立即格式化人际关系<br>
+          重新安装大脑操作系统<br>
+        </p>
       </div>
+      <button class="btn" onclick="s9()">▸ 尝试修复（很可能失败）</button>
     `);
-    var ta = [
-      [80, 'barA', 'txtA', '发现搞笑基因片段 #233'],
-      [60, 'barB', 'txtB', '检测到超强抽象思维波'],
-      [92, 'barC', 'txtC', '平行宇宙中共有 666 个你在吃瓜'],
-      [99, 'barD', 'txtD', '你的沙雕指数超越全网 99.9% 用户'],
-    ];
-    ta.forEach(function(a, i) {
-      setTimeout(function() {
-        document.getElementById(a[1]).style.width = a[0] + '%';
-        document.getElementById(a[2]).textContent = a[3];
-      }, i * 800);
-    });
-    setTimeout(s8, ta.length * 800 + 1000);
-  };
+  }, 1400);
+}
 
-  // ====== S8: 结果页面-第一部分 ======
-  function s8() {
-    h(`
-      <div class="card center fade-in" style="border-color:#f0f;">
-        <p class="rainbow" style="font-size:28px;font-weight:bold;">🎯 分析结果 🎯</p>
+// S9: 假修复 + 最终诊断
+function s9() {
+  h(`
+    <div class="card center">
+      <p class="red mb8">[ 正在尝试修复... ]</p>
+      <div class="bar"><div class="bar-fill" id="b2"></div></div>
+      <p class="dim" id="t2">连接赛博冥界服务器...</p>
+    </div>
+  `);
+  var fixes = [
+    [30, '扫描数据损坏区...', '损坏严重，无法修复'],
+    [55, '尝试重置脑回路...', '重置失败，脑回路过于抽象'],
+    [70, '联系冥界技术支持...', '技术支持已下班'],
+    [85, '启动终极修复方案...', '方案已崩溃'],
+    [99, '放弃修复...', '系统选择接受现实'],
+  ];
+  fixes.forEach(function(f, i) {
+    setTimeout(function() {
+      document.getElementById('b2').style.width = f[0] + '%';
+      document.getElementById('t2').textContent = f[1];
+      if (f[2]) {
+        setTimeout(function() {
+          document.getElementById('t2').textContent = f[1] + ' — ' + f[2];
+        }, 350);
+      }
+    }, i * 800);
+  });
+  setTimeout(s10, fixes.length * 800 + 800);
+}
+
+// S10: 最终阴间诊断书
+function s10() {
+  crashFlash(6, 150);
+  document.body.style.background = '#000';
+  var titles = [
+    '赛博冥界永久居民',
+    '互联网数字幽灵',
+    '深夜抽象亡灵',
+    '表情包非物质遗产',
+    '人类社交系统BUG',
+    '精神不稳定核心成员',
+    '脑电波紊乱携带者',
+    '社交媒体重度成瘾者',
+    '现实与网络人格分裂体',
+    '已确认不可修复个体',
+    '抽象文化的最终形态',
+    '凌晨三点活跃物种',
+  ];
+  var t = titles[Math.floor(Math.random() * titles.length)];
+
+  h(`
+    <div class="card center zoom" style="border-color:#800;">
+      <p class="fz28 mb8">💀</p>
+      <p class="fz18 red mb16 glitch-txt">[ 最终诊断书 ]</p>
+      <p class="fz14 white l2 mb8">
+        经赛博冥界AI系统深度分析<br>
+        结合区块链+云计算+量子计算<br>
+        对目标 <span class="red fz18">${userName}</span> 作出以下判定：
+      </p>
+      <div class="card" style="border-color:#600;">
+        <p class="fz22 red center mb8">${t}</p>
+        <p class="fz14 white center l2">
+          诊断编号：#${Math.random().toString(36).substring(2, 10).toUpperCase()}<br>
+          签发机构：赛博冥界管理局<br>
+          有效期限：<span class="red blink">永久</span><br>
+          备注：此诊断无法上诉
+        </p>
       </div>
-      <div class="card pink center fade-in">
-        <p class="em" style="color:#fff;">受检人：<span style="font-size:22px;color:#ff0;font-weight:bold;">${userName}</span></p>
-        <div style="margin:14px 0;font-size:14px;line-height:2;">
-          <p>🧬 可爱基因：<span style="color:#f0f;">超标 999%</span></p>
-          <p>🧠 抽象等级：<span style="color:#0ff;">SSS+ (满级)</span></p>
-          <p>😂 幽默指数：<span style="color:#ff0;">溢出屏幕</span></p>
-          <p>🦄 独特程度：<span style="color:#0f0;">宇宙唯一</span></p>
-          <p>👑 综合评定：<span style="font-size:20px;font-weight:bold;color:#f0f;">人类高质量模因携带者</span></p>
+      <p class="dim mt8">* 系统将于 5 秒后自毁 *</p>
+    </div>
+    <button class="btn" onclick="s11()">▸ 紧急逃生出口</button>
+  `);
+}
+
+// S11: 假自毁倒计时
+function s11() {
+  var count = 10;
+  function tick() {
+    if (count < 0) {
+      h(`
+        <div class="card center flicker" style="border-color:#f00;">
+          <p class="fz36 red mb16">☠</p>
+          <p class="fz18 red glitch-txt">SYSTEM DESTROYED</p>
+          <p class="dim">但其实什么都没发生</p>
+          <p class="dim">你被骗了</p>
         </div>
-      </div>
-      <button class="btn pink huge" onclick="s9()">💎 点击领取你的专属称号</button>
-    `);
-  };
-
-  // ====== S9: 随机搞笑称号 ======
-  function s9() {
-    var titles = [
-      '宇宙无敌抽象派掌门人 🌌',
-      '互联网冲浪一级运动员 🏄',
-      '深夜emo冠军 + 白日梦大师 🌙',
-      '赛博世界首席搞笑官 🃏',
-      '人类表情包非遗传承人 🎭',
-      '国际认证沙雕艺术家 🗿',
-      '全球抽象文化推广大使 🌍',
-      '五星级吃瓜群众认证 🍉',
-      '资深摸鱼学博士生导师 🐟',
-      '模因病毒自然携带者 🧬',
-      '互联网嘴替特级专家 👄',
-      '脑回路清奇协会会长 🌀',
-      '废话文学终身成就奖 📜',
-      '朋友圈脱口秀首席编剧 🎤',
-    ];
-    var rand = titles[Math.floor(Math.random() * titles.length)];
-
+        <button class="btn" onclick="location.reload()">▸ 从头再来</button>
+        <p class="dim center" style="margin-top:20px;">纯属娱乐 切勿当真</p>
+      `);
+      return;
+    }
+    flash();
     h(`
-      <div class="card center fade-in zoom-in" style="border-color:#f0f;">
-        <p class="em" style="color:#fff;">🏆 恭喜 ${userName} 获得：</p>
-        <p style="font-size:24px;font-weight:bold;margin:16px 0;line-height:1.5;" class="rainbow">
-          ${rand}
-        </p>
-        <p class="dim">此称号已上传区块链永久存证</p>
-        <p class="dim">证书编号：#${Math.floor(Math.random() * 999999999)}</p>
+      <div class="card center shake">
+        <p class="fz28 red mb8 blink">⚠️ 系统自毁中 ⚠️</p>
+        <p class="fz36 red glitch-txt">${count}</p>
+        <p class="dim">逃跑已经来不及了</p>
       </div>
-      <button class="btn btn huge" onclick="s10()">🎁 还有隐藏彩蛋</button>
     `);
-  };
+    count--;
+    setTimeout(tick, 800);
+  }
+  tick();
+}
 
-  // ====== S10: 彩蛋-整蛊证书 ======
-  function s10() {
-    h(`
-      <div class="card center fade-in" style="border-color:#ff0;">
-        <p class="emoji-row">📜🎓👑</p>
-        <p class="em" style="color:#ff0;">经全球抽象协会一致认定</p>
-        <p style="font-size:18px;font-weight:bold;color:#fff;margin:12px 0;line-height:2;">
-          ${userName} 同志<br>
-          因「抽象能力突出、搞笑天赋异禀、<br>
-          精神状态遥遥领先」<br>
-          特授予：
-        </p>
-        <p class="rainbow" style="font-size:22px;font-weight:bold;margin:12px 0;">
-          终身抽象VIP荣誉称号
-        </p>
-        <p class="dim">发证单位：银河系抽象管理局</p>
-        <p class="dim">有效期：直到宇宙毁灭</p>
-        <p class="dim">防伪码：${Math.random().toString(36).substring(2, 15).toUpperCase()}</p>
-      </div>
-      <button class="btn yellow huge" onclick="s11()">🎰 试试手气！</button>
-      <button class="btn pink" onclick="location.reload()">🔄 换个人再测</button>
-    `);
-  };
-
-  // ====== S11: 抽签小互动 ======
-  function s11() {
-    var fortunes = [
-      ['🌟', '今天会有人请你喝奶茶！'],
-      ['🍀', '本周必有好事发生！'],
-      ['💸', '即将捡到钱（金额不超过5毛）'],
-      ['😴', '今晚会做一个特别离谱的梦'],
-      ['📱', '手机电量再也不会低于20%'],
-      ['🌈', '未来一周你的运气是：SSR级'],
-      ['👻', '深夜外卖永远不会迟到'],
-      ['🎮', '下一局游戏必定MVP'],
-      ['💌', '有人正偷偷夸你可爱'],
-      ['🎯', '你许的愿马上会实现'],
-      ['🦋', '明天出门会遇到惊喜'],
-      ['🔥', '你的社交能量即将爆发'],
-      ['🍕', '最近会吃到超好吃的东西'],
-      ['🎵', '随机播放突然切到最爱的歌'],
-      ['💎', '你是被选中的那个人！'],
-    ];
-    var f = fortunes[Math.floor(Math.random() * fortunes.length)];
-
-    h(`
-      <div class="card center fade-in zoom-in" style="border-color:#ff0;">
-        <p class="big">${f[0]}</p>
-        <p style="font-size:18px;color:#fff;margin:10px 0;line-height:1.6;">${f[1]}</p>
-      </div>
-      <button class="btn yellow huge" onclick="s11()">🔄 再抽一次</button>
-      <button class="btn btn" onclick="location.reload()">🔙 从头开始</button>
-      <p class="dim center" style="margin-top:20px;">本页面纯属娱乐 💕</p>
-    `);
-  };
-
-  s1();
-})();
+s1();
 </script>
 </body>
 </html>
