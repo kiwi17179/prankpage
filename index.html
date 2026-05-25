@@ -3,322 +3,257 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>灵魂拷问</title>
+<title> Loading...</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    background: #1a1a2e; color: #eee; min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 20px; overflow-x: hidden; overflow-y: auto;
-    position: relative;
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
+    background:#0f0f1a;color:#ccc;min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;
+    padding:16px;overflow-x:hidden;position:relative;
   }
-  .container { width: 100%; max-width: 420px; }
-
-  .card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 14px; padding: 22px; margin: 14px 0;
-    text-align: center;
+  .wrap{width:100%;max-width:420px}
+  .card{
+    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+    border-radius:14px;padding:20px;margin:12px 0;text-align:center
   }
-
-  .btn-agree {
-    display: block; padding: 18px; border: none; border-radius: 16px;
-    background: #16213e; color: #aaf; font-size: 18px; font-weight: 700;
-    cursor: pointer; transition: all 0.3s; letter-spacing: 2px;
-    margin: 0 auto; text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    user-select: none; -webkit-tap-highlight-color: transparent;
+  .btn-go{
+    display:block;width:85%;padding:20px;margin:0 auto;border:none;border-radius:16px;
+    background:linear-gradient(135deg,#1a3a5c,#1a2a4a);color:#8cf;font-size:20px;font-weight:800;
+    cursor:pointer;letter-spacing:2px;transition:all .3s;
+    box-shadow:0 6px 24px rgba(0,0,0,.4);text-align:center;
+    user-select:none;-webkit-tap-highlight-color:transparent;
   }
-
-  .btn-deny {
-    display: inline-block; padding: 18px 28px; border: 2px dashed #555;
-    border-radius: 16px; background: transparent; color: #999;
-    font-size: 18px; font-weight: 700; cursor: pointer;
-    transition: all 0.25s ease; letter-spacing: 2px;
-    position: relative;
-    user-select: none; -webkit-tap-highlight-color: transparent;
-    white-space: nowrap;
+  .btn-deny{
+    display:inline-block;padding:18px 28px;border:2px dashed #444;
+    border-radius:16px;background:transparent;color:#777;
+    font-size:18px;font-weight:700;cursor:pointer;
+    transition:all .25s ease;letter-spacing:2px;
+    position:relative;user-select:none;-webkit-tap-highlight-color:transparent;white-space:nowrap;
   }
-
-  .toast {
-    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-    background: #333; color: #ffa; padding: 12px 24px;
-    border-radius: 25px; font-size: 14px; font-weight: 600;
-    z-index: 999; animation: toastIn 0.3s ease, toastOut 0.3s ease 1.8s forwards;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5); max-width: 90%;
-    text-align: center; pointer-events: none;
+  .toast{
+    position:fixed;left:50%;transform:translateX(-50%);
+    background:#222;color:#ff9;padding:14px 24px;border-radius:25px;
+    font-size:14px;font-weight:600;z-index:999;pointer-events:none;
+    box-shadow:0 10px 40px rgba(0,0,0,.6);max-width:88%;text-align:center;line-height:1.5;
+    animation:toastIn .25s ease, toastOut .25s ease 2s forwards;
   }
-  @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-30px); } }
-  @keyframes toastOut { to { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
-
-  .counter {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    font-size: 12px; color: #444; z-index: 100;
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-30px)}}
+  @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-20px)}}
+  .progress-wrap{
+    margin:20px 0 8px;text-align:center
   }
-
-  .tracker { font-size: 12px; color: #555; margin-top: 8px; }
-
-  .fade-in { animation: fadeIn 0.5s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-  .zoom-big { animation: zoomBig 0.6s ease forwards; }
-  @keyframes zoomBig { to { transform: scale(1.5); opacity: 0; } }
-
-  .shake { animation: shake 0.4s ease; }
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    30% { transform: translateX(-8px); }
-    60% { transform: translateX(8px); }
-    90% { transform: translateX(-4px); }
+  .progress-bar{
+    width:100%;height:10px;background:rgba(255,255,255,0.05);border-radius:5px;overflow:hidden;margin:0 auto
   }
-
-  .green { color: #7f7; }
-  .yellow { color: #ffa; }
-  .red { color: #f77; }
-  .dim { color: #666; font-size: 13px; }
-  .big-text { font-size: 48px; }
-  .mid-text { font-size: 20px; }
-  .sm-text { font-size: 13px; }
-
-  .cert {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    border: 2px solid #ffd700; border-radius: 16px; padding: 30px 20px;
-    text-align: center; position: relative; overflow: hidden;
+  .progress-fill{
+    height:100%;border-radius:5px;transition:width .3s ease;background:#ff9;width:0%
   }
-  .cert::before {
-    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: conic-gradient(from 0deg, transparent, rgba(255,215,0,0.05), transparent, rgba(255,215,0,0.05), transparent);
-    animation: rotate 8s linear infinite;
+  .progress-label{font-size:12px;color:#555;margin-top:6px}
+  .fade-in{animation:fadeIn .5s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .shake{animation:shake .35s ease}
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-10px)}
+    50%{transform:translateX(10px)}
+    75%{transform:translateX(-6px)}
   }
-  @keyframes rotate { 100% { transform: rotate(360deg); } }
-  .cert-inner { position: relative; z-index: 1; }
+  .pop{animation:pop .4s ease}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+  .g{color:#8f8}.y{color:#ff9}.r{color:#f77}.dim{color:#555;font-size:13px}
+  .m{font-size:20px}.s{font-size:13px}.l{font-size:28px}.xl{font-size:40px}
+  .cert{
+    background:linear-gradient(135deg,#111122,#1a1a30);border:2px solid #c9a84c;
+    border-radius:16px;padding:28px 18px;text-align:center;position:relative;overflow:hidden
+  }
+  .cert::before{
+    content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+    background:conic-gradient(from 0deg,transparent,rgba(201,168,76,.04),transparent,rgba(201,168,76,.04),transparent);
+    animation:spin 10s linear infinite
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .cert-body{position:relative;z-index:1}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 </style>
 </head>
 <body>
-
-<div class="container" id="app"></div>
-<div id="toastArea"></div>
-<div class="counter" id="counter"></div>
-
+<div class="wrap" id="app"></div>
+<div id="toasts"></div>
 <script>
-var root = document.getElementById('app');
-var toastArea = document.getElementById('toastArea');
-var counterEl = document.getElementById('counter');
-var denyClicks = 0;
-var requiredClicks = 10;
-var denyBtnMoving = false;
-
-var zingers = [
-  '她上周的早八出勤率：0/5 🤣',
-  '室友原话：想见她一面比见辅导员还难',
-  '她的闹钟一共设了20个，没一个管用',
-  '床对她的评价：最忠实的伴侣',
-  '她的活动轨迹：床→拿外卖→床',
-  '百度地图：该用户运动半径不足50米',
-  '辅导员：臧yx是谁？怎么从没见过',
-  '外卖小哥：又是你？？今天第三顿了',
-  '她的手机相册：80%是躺着拍的',
-  '据统计，她每天平均步数：三位数',
-  '她说过最多的话：「再睡五分钟」',
-  '昨晚她说「明天一定早起」——现在呢？',
-  '她的微信签名可以改成：在睡觉，勿扰',
-  '如果睡觉是奥运项目，她已经拿金牌了',
-  '她的被窝：已经长出亲情了',
-  '唯一能让她起床的理由：快递到了',
-  '她室友说：灯一关她就消失，灯一开她就出现，跟会遁地似的',
-  '让她早起的难度 ≈ 让她不玩手机',
-  '她的英语四级听力：zZZzzzZZzz...',
-  '她的特长：用任何姿势睡着',
-  '她是寝室熄灯后第一个睡着的，也是第二天最后醒的',
-  '叫她起床的室友已经放弃，改为帮她带饭',
-  '她躺平的姿势比专业课知识还扎实',
-  '她的人生格言：能坐着绝不站着，能躺着绝不坐着',
-  '同学对她的印象：好像总是在睡觉',
-  '她的每日规划：上午睡觉，下午躺着，晚上继续睡',
+var A=document.getElementById('app'),T=document.getElementById('toasts');
+var clicks=0,need=10,moving=false;
+var quotes=[
+  '臧yx的早八出勤率：<b>0/5</b>，老师以为她退学了',
+  '室友原话：\"想见yx一面？建议蹲守外卖架，概率更高\"',
+  '她定了20个闹钟，结果全寝都醒了，就她没醒',
+  '床：我这辈子没见过这么粘人的人类',
+  '她的运动轨迹：床→厕所→外卖架→床，闭环了',
+  '百度地图年度报告：您今年解锁的新地点——0个',
+  '辅导员：这个学生我好像只在花名册上见过',
+  '外卖小哥给她备注：<b>VVIP 固定客户 不用打电话 放门口</b>',
+  '她手机相册80%是躺着拍的，剩下20%是外卖',
+  '日均步数487，其中200步是取外卖走的',
+  '她说过最多的话：\"帮我带一份，谢谢\"',
+  '\"明天一定早起\"——这句话她说了四年',
+  '她的微信状态永远是：<b>睡觉中</b>',
+  '如果睡觉能加学分，她GPA已经4.5了',
+  '她的被窝和她已经有感情了，分不开的那种',
+  '能让她主动下床的只有两件事：快递和奶茶',
+  '室友：关灯前她还在说话，关灯后0.5秒——她睡着了',
+  '让她起床比让她卸载抖音还难',
+  '英语课听力播放5分钟后：她已进入深度睡眠',
+  '她的特长：坐着睡、趴着睡、靠着睡、任何姿势睡',
+  '熄灯后第一个睡，第二天中午最后一个醒，形成完美闭环',
+  '室友已经放弃叫她，改为直接帮她把早饭和午饭一起带',
+  '她的人生哲学：能躺着解决的问题绝不坐着',
+  '同学四年，有人没见过她站着的样子',
+  '她的课表：上午睡觉，下午躺着，晚上在床上玩手机',
+  '运动会？她的项目是<b>床上躺平大赛</b>，稳拿第一',
+  '宿管阿姨：这姑娘是不是身体不舒服？室友：不，她就是懒',
+  '她上次跑步是什么时候？<b>没有记录</b>',
+  '她的购物车：枕头、靠垫、懒人沙发、各种躺着用的东西',
+  '听说她要考研，室友：你确定你能在考场醒着？',
+  '她的微信步数排行榜：永远倒数第一，和第二名差一个数量级',
+  '天气好她不出门，天气不好她更有理由不出门',
+  '她能把\"等一下\"说成\"等一天\"',
+  '室友群里的日常：<b>@臧yx 你醒了没？</b>',
+  '她上课的姿势永远是：趴着',
 ];
-
-function showToast(msg) {
-  var t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  t.style.top = (20 + Math.random() * 60) + 'px';
-  toastArea.appendChild(t);
-  setTimeout(function() { t.remove(); }, 2200);
+function toast(msg){
+  var t=document.createElement('div');t.className='toast';t.innerHTML=msg;
+  t.style.top=(15+Math.random()*50)+'px';
+  T.appendChild(t);setTimeout(function(){t.remove()},2400);
 }
-
-// S1: 开场
-function s1() {
-  h(`
+function p1(){
+  A.innerHTML=`
     <div class="card fade-in">
-      <p class="mid-text mb16">📋 大学生综合素质评估</p>
-      <p class="dim">本评估由室友委员会 + AI大数据 + 寝室观察团联合出品</p>
-      <p class="dim">评估对象：<span class="yellow">臧yx</span></p>
+      <p class="m" style="color:#fff;">📋 大学生综合行为评估系统</p>
+      <p class="dim">评估委员会：全寝成员 · AI大数据 · 外卖小哥 · 辅导员</p>
+      <p class="dim" style="margin-top:8px;">受评人：<span class="y" style="font-size:18px;">臧yx</span></p>
     </div>
     <div class="card fade-in">
-      <p class="dim">评估维度：</p>
-      <p class="dim">☑ 起床积极性</p>
-      <p class="dim">☑ 外卖下单频率</p>
-      <p class="dim">☑ 每日步数统计</p>
-      <p class="dim">☑ 课桌到床的往返速度</p>
+      <p class="dim" style="margin-bottom:10px;">评估指标：</p>
+      <p class="dim">✓ 起床参与度</p>
+      <p class="dim">✓ 寝室→教室位移频率</p>
+      <p class="dim">✓ 外卖下单频次</p>
+      <p class="dim">✓ 非睡眠时段躺姿时长占比</p>
     </div>
-    <button class="btn-agree" onclick="s2()" style="font-size:16px;width:100%;padding:16px;">
-      ▸ 开始评估
-    </button>
-    <p class="dim">* 结果将同步至寝室群</p>
-  `);
+    <button class="btn-go" onclick="p2()" style="font-size:17px;width:100%;">查看数据报告 ▸</button>
+    <p class="dim" style="margin-top:10px;">* 报告结果将自动同步至寝室群聊</p>
+  `;
 }
-
-// S2: 假数据展示
-function s2() {
-  h(`
+function p2(){
+  A.innerHTML=`
     <div class="card fade-in">
-      <p class="mid-text yellow mb8">⏳ 数据收集中...</p>
-      <p class="dim">正在调取臧yx的日常行为数据</p>
+      <p class="m y">⏳ 近30天行为数据汇总</p>
+      <p class="dim">数据来源：课表签到 · 外卖平台 · 微信步数 · 室友证言</p>
     </div>
     <div class="card fade-in">
-      <p class="dim l2" style="text-align:left;line-height:2.2;">
-        🔍 近30天早课签到率：<span class="red">13.3%</span><br>
-        🔍 日均外卖下单数：<span class="yellow">2.7 单</span><br>
-        🔍 日均手机使用时长：<span class="red">11.4 小时</span><br>
-        🔍 其中躺姿占比：<span class="yellow">92%</span><br>
-        🔍 日均步数：<span class="red">487 步</span><br>
-        🔍 寝室→教室的距离：<span class="dim">约300米</span><br>
-        🔍 这个距离她打车去过：<span class="yellow">3次</span>
+      <p class="dim" style="text-align:left;line-height:2.4;">
+        🔍 早课出勤率：<span class="r">13.3%</span>（全班倒数第一）<br>
+        🔍 日均外卖：<span class="y">2.7 单</span>（寝室贡献值最高）<br>
+        🔍 日均步数：<span class="r">487 步</span>（不到全校平均的零头）<br>
+        🔍 躺姿占比：<span class="y">92%</span>（非睡眠时间段）<br>
+        🔍 日均屏幕时间：<span class="r">11.4 小时</span><br>
+        🔍 寝室到教学楼约300米<br>
+        🔍 这300米她打车去过：<span class="y">3 次</span><br>
+        🔍 室友帮忙带饭次数：<span class="r">无法统计</span>（太多了）
       </p>
     </div>
-    <button class="btn-agree" onclick="s3()" style="font-size:16px;width:100%;padding:16px;">
-      ▸ 查看综合判定
-    </button>
-  `);
+    <button class="btn-go" onclick="p3()" style="font-size:17px;width:100%;">进入综合判定 ▸</button>
+  `;
 }
-
-// S3: 核心拷问 - 两个按钮
-function s3() {
-  denyClicks = 0;
-  updateCounter();
-  h(`
+function p3(){
+  clicks=0;refresh();
+  A.innerHTML=`
     <div class="card fade-in">
-      <p class="mid-text mb16">⚠️ 请根据以上数据回答</p>
-      <p style="font-size:22px;font-weight:800;line-height:1.6;">
-        <span class="yellow">臧yx</span> 是否<br>好吃且懒做？
+      <p class="m" style="color:#fff;">⚠️ 请根据数据做出判断</p>
+      <p style="font-size:24px;font-weight:900;line-height:1.6;margin-top:12px;">
+        <span class="y">臧yx</span> 是否<br>好吃且懒做？
       </p>
-      <p class="dim" style="margin-top:12px;">请做出公平公正的判断</p>
+      <p class="dim" style="margin-top:10px;">请公平公正、凭良心作答</p>
     </div>
-    <div id="agreeArea" style="text-align:center;margin:16px 0;">
-      <button class="btn-agree" id="agreeBtn" onclick="finish()" style="width:85%;font-size:20px;padding:22px;">
-        ✅ 我认可<br><span style="font-size:12px;font-weight:400;color:#888;">（事实就是如此）</span>
+    <div style="text-align:center;margin:14px 0;" id="agreeZone">
+      <button class="btn-go" id="agreeBtn" onclick="done()" style="font-size:21px;padding:24px;width:90%;">
+        ✅ 我认可<br><span style="font-size:12px;font-weight:400;color:#777;">事实胜于雄辩</span>
       </button>
     </div>
-    <div id="denyArea" style="text-align:center;margin:20px 0;position:relative;min-height:70px;display:flex;align-items:center;justify-content:center;">
-      <button class="btn-deny" id="denyBtn" ontouchstart="hitDeny(event)" onclick="hitDeny(event)">
-        ❌ 我不认可
-      </button>
+    <div style="text-align:center;margin:18px 0;min-height:80px;display:flex;align-items:center;justify-content:center;position:relative;" id="denyZone">
+      <button class="btn-deny" id="denyBtn" ontouchstart="hit(event)" onclick="hit(event)">❌ 我不认可</button>
     </div>
-    <div class="tracker" id="tracker">仍需点击 <span id="remain">${requiredClicks}</span> 次「我不认可」才能提交</div>
-  `);
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+      <div class="progress-label" id="progLabel">还需 ${need} 次「我不认可」才能提交</div>
+    </div>
+  `;
 }
-
-function updateCounter() {
-  var remain = requiredClicks - denyClicks;
-  if (remain <= 0) remain = 0;
-  var remainEl = document.getElementById('remain');
-  var trackerEl = document.getElementById('tracker');
-  if (remainEl) remainEl.textContent = remain;
-  if (trackerEl) {
-    if (remain <= 0) trackerEl.innerHTML = '<span class="green">✅ 够了够了，你可以选了</span>';
-    else if (denyClicks >= 7) trackerEl.innerHTML = '仍需点击 <span id="remain" class="yellow">' + remain + '</span> 次「我不认可」才能提交  快了快了';
-    else trackerEl.innerHTML = '仍需点击 <span id="remain">' + remain + '</span> 次「我不认可」才能提交';
+function refresh(){
+  var p=document.getElementById('prog'),l=document.getElementById('progLabel');
+  var rem=need-clicks;if(rem<0)rem=0;
+  if(p)p.style.width=(clicks/need*100)+'%';
+  if(l){
+    if(rem<=0)l.innerHTML='<span class="g">行了行了你可以选了——不甘心也得认</span>';
+    else if(clicks>=7)l.innerHTML='还需 <span class="y">'+rem+'</span> 次，快了，坚持住...';
+    else if(clicks>=4)l.innerHTML='还需 <span class="y">'+rem+'</span> 次，别挣扎了';
+    else l.innerHTML='还需 '+rem+' 次，慢慢点，反正也没用';
   }
 }
-
-window.hitDeny = function(e) {
-  if (e) e.preventDefault();
-  if (denyBtnMoving) return;
-  denyBtnMoving = true;
-
-  denyClicks++;
-  showToast(zingers[(denyClicks - 1) % zingers.length]);
-  updateCounter();
-
-  var denyArea = document.getElementById('denyArea');
-  var denyBtn = document.getElementById('denyBtn');
-
-  if (denyClicks >= requiredClicks) {
-    denyBtn.style.border = '2px solid #7f7';
-    denyBtn.style.color = '#7f7';
-    denyBtn.style.fontSize = '20px';
-    denyBtn.style.padding = '22px 32px';
-    denyBtn.textContent = '😤 我不认可！（够了！）';
-    denyBtn.onclick = function(e) { e.preventDefault(); finish(); };
-    denyBtnMoving = false;
-    return;
+window.hit=function(e){
+  if(e)e.preventDefault();if(moving)return;moving=true;
+  clicks++;
+  toast(quotes[(clicks-1)%quotes.length]);
+  refresh();
+  var dz=document.getElementById('denyZone'),db=document.getElementById('denyBtn');
+  if(clicks>=need){
+    db.style.border='2px solid #8f8';db.style.color='#8f8';
+    db.style.fontSize='20px';db.style.padding='22px 32px';
+    db.textContent='😤 我不认可！（行吧...）';
+    db.onclick=function(e){e.preventDefault();done();};
+    moving=false;return;
   }
-
-  // 缩小
-  var scale = Math.max(0.35, 1 - denyClicks * 0.06);
-  denyBtn.style.transform = 'scale(' + scale + ')';
-
-  // 随机跑开
-  var maxX = denyArea.clientWidth - denyBtn.offsetWidth * scale;
-  var maxY = denyArea.clientHeight - denyBtn.offsetHeight * scale;
-  maxX = Math.max(maxX, 40);
-  maxY = Math.max(maxY, 20);
-  var x = Math.random() * maxX - maxX/2;
-  var y = Math.random() * maxY - maxY/2;
-  denyBtn.style.position = 'relative';
-  denyBtn.style.left = x + 'px';
-  denyBtn.style.top = y + 'px';
-
-  // 抖动
-  denyArea.classList.add('shake');
-  setTimeout(function() { denyArea.classList.remove('shake'); }, 400);
-
-  var agreeBtn = document.getElementById('agreeBtn');
-  var agreeScale = 1 + denyClicks * 0.06;
-  agreeBtn.style.transform = 'scale(' + agreeScale + ')';
-  agreeBtn.style.transition = 'transform 0.3s ease';
-
-  setTimeout(function() { denyBtnMoving = false; }, 300);
+  var s=Math.max(0.3,1-clicks*0.065);db.style.transform='scale('+s+')';
+  var mx=Math.max(dz.clientWidth-db.offsetWidth*s,60);
+  var my=Math.max(dz.clientHeight-db.offsetHeight*s,30);
+  db.style.position='relative';db.style.left=((Math.random()-.5)*mx)+'px';
+  db.style.top=((Math.random()-.5)*my)+'px';
+  dz.classList.add('shake');setTimeout(function(){dz.classList.remove('shake')},350);
+  var ab=document.getElementById('agreeBtn');
+  ab.style.transform='scale('+(1+clicks*0.07)+')';ab.style.transition='transform .3s ease';
+  setTimeout(function(){moving=false},280);
 };
-
-// 结局
-function finish() {
-  document.body.style.background = '#0d0d1a';
-  h(`
+function done(){
+  document.body.style.background='#0a0a16';
+  A.innerHTML=`
     <div class="cert fade-in">
-      <div class="cert-inner">
-        <p class="dim">🏆 大学生综合素质评估委员会 🏆</p>
-        <p class="dim" style="margin:8px 0;">（全体室友 + AI + 外卖小哥联合认证）</p>
-        <p style="font-size:60px;margin:16px 0;">😴</p>
-        <p class="mid-text yellow" style="margin:8px 0;">经综合评估，一致认定</p>
-        <p style="font-size:28px;font-weight:900;color:#ffd700;margin:12px 0;letter-spacing:3px;">
-          臧 yx
+      <div class="cert-body">
+        <p class="dim">🏆 大学生综合行为评估委员会 🏆</p>
+        <p class="dim" style="margin:6px 0;">全寝 · AI · 外卖小哥 · 辅导员 联合认证</p>
+        <p class="xl" style="margin:16px 0;">😴</p>
+        <p class="m y">经全面、客观、无可辩驳的评估</p>
+        <p style="font-size:30px;font-weight:900;color:#c9a84c;margin:12px 0;letter-spacing:3px;">臧 yx</p>
+        <p style="font-size:24px;font-weight:800;color:#fff;margin:12px 0;line-height:1.8;">
+          荣获<br><span style="font-size:38px;color:#c9a84c;">「睡神」</span><br>终身荣誉称号
         </p>
-        <p style="font-size:22px;font-weight:800;color:#fff;margin:12px 0;line-height:1.8;">
-          荣获<br><span style="font-size:36px;color:#ffd700;">「睡神」</span><br>荣誉称号
-        </p>
-        <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:16px;margin:16px 0;text-align:left;line-height:2.2;">
-          <p class="dim">🏅 日均睡眠时长：<span class="yellow">10h+</span>（保守估计）</p>
-          <p class="dim">🏅 起床失败次数：<span class="red">不计其数</span></p>
-          <p class="dim">🏅 寝室懒人指数：<span class="yellow">断层第一</span></p>
-          <p class="dim">🏅 外卖平台等级：<span class="yellow">至尊VIP</span></p>
-          <p class="dim">🏅 躺平学研究：<span class="yellow">已达博士后水平</span></p>
+        <div style="background:rgba(255,255,255,.02);border-radius:12px;padding:16px;margin:16px 0;text-align:left;line-height:2.3;">
+          <p class="dim">🏅 日均睡眠：<span class="y">10h+</span>（极度保守估计）</p>
+          <p class="dim">🏅 起床失败：<span class="r">不可计数</span></p>
+          <p class="dim">🏅 寝室懒人榜：<span class="y">连续N学期第一</span></p>
+          <p class="dim">🏅 外卖会员：<span class="y">至尊钻石VIP</span></p>
+          <p class="dim">🏅 躺平学造诣：<span class="y">博士后及以上</span></p>
+          <p class="dim">🏅 \"再睡五分钟\"次数：<span class="r">∞</span></p>
         </div>
-        <p class="dim">发证方：你的好朋友们</p>
-        <p class="dim">有效期：永久（除非你明天真的早起了）</p>
-        <p class="dim" style="margin-top:4px;">证书编号：ZZZ-${new Date().getFullYear()}-${String(denyClicks).padStart(2,'0')}</p>
+        <p class="dim">发证方：你的好朋友们（非常爱你才做这个）</p>
+        <p class="dim">有效期：永久有效</p>
+        <p class="dim">（除非你连续一周早起上课，可申请复核）</p>
+        <p class="dim" style="margin-top:6px;">证书编号：ZZZ-${new Date().getFullYear()}-${String(clicks||999).padStart(2,'0')}</p>
       </div>
     </div>
-    <button class="btn-agree" onclick="location.reload()" style="width:100%;margin-top:20px;font-size:16px;padding:16px;">
-      🔄 换个人再测
-    </button>
-    <p style="text-align:center;margin-top:24px;color:#444;font-size:13px;">纯属娱乐 · 感情深才这样 · 别打我</p>
-  `);
-  counterEl.textContent = '';
+    <button class="btn-go" onclick="location.reload()" style="width:100%;margin-top:20px;font-size:16px;padding:18px;">🔄 换个人再测</button>
+    <p style="text-align:center;margin-top:28px;color:#333;font-size:12px;">感情不够深做不出这玩意 · 都大学生了别真生气</p>
+  `;
 }
-
-s1();
+p1();
 </script>
 </body>
 </html>
