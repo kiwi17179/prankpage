@@ -3,456 +3,319 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>.</title>
+<title>灵魂拷问</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: 'Courier New', monospace;
-    background: #000; color: #f00;
-    min-height: 100vh; display: flex; flex-direction: column; align-items: center;
-    padding: 10px; overflow-x: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #1a1a2e; color: #eee; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px; overflow-x: hidden; overflow-y: auto;
+    position: relative;
   }
   .container { width: 100%; max-width: 420px; }
+
   .card {
-    border: 1px solid #300; border-radius: 6px; padding: 16px; margin: 10px 0;
-    background: rgba(40,0,0,0.6);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 22px; margin: 14px 0;
+    text-align: center;
   }
-  .card.glitch-box { border-color: #600; animation: glitchBox 4s infinite; }
-  @keyframes glitchBox {
-    0%,90%,100% { transform: none; opacity: 1; }
-    92% { transform: translate(-3px, 2px); opacity: 0.8; }
-    94% { transform: translate(3px, -1px); opacity: 1; }
-    96% { transform: translate(-1px, -2px); opacity: 0.9; }
-    98% { transform: translate(2px, 1px); }
+
+  .btn-agree {
+    display: block; padding: 18px; border: none; border-radius: 16px;
+    background: #16213e; color: #aaf; font-size: 18px; font-weight: 700;
+    cursor: pointer; transition: all 0.3s; letter-spacing: 2px;
+    margin: 0 auto; text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    user-select: none; -webkit-tap-highlight-color: transparent;
   }
-  .btn {
-    display: block; width: 100%; padding: 14px; margin: 8px 0;
-    border: 1px solid #500; background: rgba(80,0,0,0.4);
-    color: #f00; font-family: inherit; font-size: 15px;
-    border-radius: 4px; cursor: pointer; letter-spacing: 2px;
-    transition: all 0.15s;
+
+  .btn-deny {
+    display: inline-block; padding: 18px 28px; border: 2px dashed #555;
+    border-radius: 16px; background: transparent; color: #999;
+    font-size: 18px; font-weight: 700; cursor: pointer;
+    transition: all 0.25s ease; letter-spacing: 2px;
+    position: relative;
+    user-select: none; -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
   }
-  .btn:active { background: #600; border-color: #f00; }
-  .btn:disabled { opacity: 0.3; pointer-events: none; }
-  .bar {
-    width: 100%; height: 6px; background: rgba(255,0,0,0.1);
-    border-radius: 3px; overflow: hidden; margin: 8px 0;
+
+  .toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    background: #333; color: #ffa; padding: 12px 24px;
+    border-radius: 25px; font-size: 14px; font-weight: 600;
+    z-index: 999; animation: toastIn 0.3s ease, toastOut 0.3s ease 1.8s forwards;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5); max-width: 90%;
+    text-align: center; pointer-events: none;
   }
-  .bar-fill { height: 100%; background: #f00; width: 0%; transition: width 0.4s; }
-  .hidden { display: none !important; }
-  .center { text-align: center; }
-  .blink { animation: blinker 0.8s step-end infinite; }
-  @keyframes blinker { 50% { opacity: 0; } }
-  .flicker { animation: flicker 0.15s infinite; }
-  @keyframes flicker {
-    0%,100% { opacity: 1; }
-    41% { opacity: 0.8; }
-    43% { opacity: 0.3; }
-    47% { opacity: 1; }
-    67% { opacity: 0.6; }
-    69% { opacity: 0.1; }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-30px); } }
+  @keyframes toastOut { to { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
+
+  .counter {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    font-size: 12px; color: #444; z-index: 100;
   }
-  .shake { animation: shaker 0.3s ease 3; }
-  @keyframes shaker {
+
+  .tracker { font-size: 12px; color: #555; margin-top: 8px; }
+
+  .fade-in { animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .zoom-big { animation: zoomBig 0.6s ease forwards; }
+  @keyframes zoomBig { to { transform: scale(1.5); opacity: 0; } }
+
+  .shake { animation: shake 0.4s ease; }
+  @keyframes shake {
     0%,100% { transform: translateX(0); }
-    25% { transform: translateX(-8px); }
-    75% { transform: translateX(8px); }
+    30% { transform: translateX(-8px); }
+    60% { transform: translateX(8px); }
+    90% { transform: translateX(-4px); }
   }
-  .zoom { animation: zoomer 0.6s ease; }
-  @keyframes zoomer {
-    0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
-    60% { transform: scale(1.1) rotate(5deg); }
-    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+
+  .green { color: #7f7; }
+  .yellow { color: #ffa; }
+  .red { color: #f77; }
+  .dim { color: #666; font-size: 13px; }
+  .big-text { font-size: 48px; }
+  .mid-text { font-size: 20px; }
+  .sm-text { font-size: 13px; }
+
+  .cert {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 2px solid #ffd700; border-radius: 16px; padding: 30px 20px;
+    text-align: center; position: relative; overflow: hidden;
   }
-  .glitch-txt { animation: glitchText 2s infinite; }
-  @keyframes glitchText {
-    0%,90%,100% { transform: none; }
-    91% { transform: skewX(2deg) translateX(-2px); }
-    93% { transform: skewX(-1deg) translateX(2px); }
-    95% { transform: skewX(1deg); }
+  .cert::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(255,215,0,0.05), transparent, rgba(255,215,0,0.05), transparent);
+    animation: rotate 8s linear infinite;
   }
-  .red { color: #f00; }
-  .white { color: #ccc; }
-  .dim { color: #600; font-size: 12px; }
-  .fz14 { font-size: 14px; }
-  .fz18 { font-size: 18px; }
-  .fz22 { font-size: 22px; }
-  .fz28 { font-size: 28px; }
-  .fz36 { font-size: 36px; }
-  .mb8 { margin-bottom: 8px; }
-  .mb16 { margin-bottom: 16px; }
-  .l2 { line-height: 2; }
+  @keyframes rotate { 100% { transform: rotate(360deg); } }
+  .cert-inner { position: relative; z-index: 1; }
 </style>
 </head>
 <body>
 
 <div class="container" id="app"></div>
-<div id="overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:999;pointer-events:none;opacity:0;transition:opacity 0.1s;"></div>
+<div id="toastArea"></div>
+<div class="counter" id="counter"></div>
 
 <script>
 var root = document.getElementById('app');
-var overlay = document.getElementById('overlay');
-var userName = '';
+var toastArea = document.getElementById('toastArea');
+var counterEl = document.getElementById('counter');
+var denyClicks = 0;
+var requiredClicks = 10;
+var denyBtnMoving = false;
 
-function flash() {
-  overlay.style.opacity = '1';
-  setTimeout(function() { overlay.style.opacity = '0'; }, 80);
+var zingers = [
+  '她上周的早八出勤率：0/5 🤣',
+  '室友原话：想见她一面比见辅导员还难',
+  '她的闹钟一共设了20个，没一个管用',
+  '床对她的评价：最忠实的伴侣',
+  '她的活动轨迹：床→拿外卖→床',
+  '百度地图：该用户运动半径不足50米',
+  '辅导员：臧yx是谁？怎么从没见过',
+  '外卖小哥：又是你？？今天第三顿了',
+  '她的手机相册：80%是躺着拍的',
+  '据统计，她每天平均步数：三位数',
+  '她说过最多的话：「再睡五分钟」',
+  '昨晚她说「明天一定早起」——现在呢？',
+  '她的微信签名可以改成：在睡觉，勿扰',
+  '如果睡觉是奥运项目，她已经拿金牌了',
+  '她的被窝：已经长出亲情了',
+  '唯一能让她起床的理由：快递到了',
+  '她室友说：灯一关她就消失，灯一开她就出现，跟会遁地似的',
+  '让她早起的难度 ≈ 让她不玩手机',
+  '她的英语四级听力：zZZzzzZZzz...',
+  '她的特长：用任何姿势睡着',
+  '她是寝室熄灯后第一个睡着的，也是第二天最后醒的',
+  '叫她起床的室友已经放弃，改为帮她带饭',
+  '她躺平的姿势比专业课知识还扎实',
+  '她的人生格言：能坐着绝不站着，能躺着绝不坐着',
+  '同学对她的印象：好像总是在睡觉',
+  '她的每日规划：上午睡觉，下午躺着，晚上继续睡',
+];
+
+function showToast(msg) {
+  var t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  t.style.top = (20 + Math.random() * 60) + 'px';
+  toastArea.appendChild(t);
+  setTimeout(function() { t.remove(); }, 2200);
 }
-function crashFlash(count, speed) {
-  if (count <= 0) return;
-  overlay.style.opacity = (count % 2) ? '1' : '0';
-  setTimeout(function() { crashFlash(count - 1, speed); }, speed);
-}
 
-function h(t) { root.innerHTML = t; }
-
-// S1: 假警告
+// S1: 开场
 function s1() {
   h(`
-    <div class="card glitch-box center">
-      <p class="fz28 mb8">⚠️</p>
-      <p class="fz18 red mb8 glitch-txt">WARNING</p>
-      <p class="fz14 white">检测到未知设备接入</p>
-      <p class="fz14 white">安全协议已触发</p>
-      <p class="dim blink">SYS_ALERT_0x0001</p>
+    <div class="card fade-in">
+      <p class="mid-text mb16">📋 大学生综合素质评估</p>
+      <p class="dim">本评估由室友委员会 + AI大数据 + 寝室观察团联合出品</p>
+      <p class="dim">评估对象：<span class="yellow">臧yx</span></p>
     </div>
-    <button class="btn" onclick="s2()">▸ 查看详情</button>
-    <button class="btn" onclick="s2()">▸ 忽略警告（不推荐）</button>
+    <div class="card fade-in">
+      <p class="dim">评估维度：</p>
+      <p class="dim">☑ 起床积极性</p>
+      <p class="dim">☑ 外卖下单频率</p>
+      <p class="dim">☑ 每日步数统计</p>
+      <p class="dim">☑ 课桌到床的往返速度</p>
+    </div>
+    <button class="btn-agree" onclick="s2()" style="font-size:16px;width:100%;padding:16px;">
+      ▸ 开始评估
+    </button>
+    <p class="dim">* 结果将同步至寝室群</p>
   `);
 }
 
-// S2: 假授权协议
+// S2: 假数据展示
 function s2() {
-  flash();
   h(`
-    <div class="card center">
-      <p class="red mb8">[ 系统安全协议 v6.6.6 ]</p>
-      <p class="dim l2 mb8">
-        根据《网络安全法》第 404 条<br>
-        本设备需进行强制安全审查<br>
-        继续即表示你同意以下条款：
-      </p>
-      <p class="dim l2" style="color:#500;">
-        1. 允许读取设备灵魂数据<br>
-        2. 允许AI扫描所有脑电波<br>
-        3. 允许接入赛博冥界数据库<br>
-        4. 放弃对本系统的任何反抗
+    <div class="card fade-in">
+      <p class="mid-text yellow mb8">⏳ 数据收集中...</p>
+      <p class="dim">正在调取臧yx的日常行为数据</p>
+    </div>
+    <div class="card fade-in">
+      <p class="dim l2" style="text-align:left;line-height:2.2;">
+        🔍 近30天早课签到率：<span class="red">13.3%</span><br>
+        🔍 日均外卖下单数：<span class="yellow">2.7 单</span><br>
+        🔍 日均手机使用时长：<span class="red">11.4 小时</span><br>
+        🔍 其中躺姿占比：<span class="yellow">92%</span><br>
+        🔍 日均步数：<span class="red">487 步</span><br>
+        🔍 寝室→教室的距离：<span class="dim">约300米</span><br>
+        🔍 这个距离她打车去过：<span class="yellow">3次</span>
       </p>
     </div>
-    <div class="card center" style="border-color:#500;">
-      <p class="fz28 blink red">🔴</p>
-      <p class="fz14 white">威胁等级：<span class="red blink">CRITICAL</span></p>
-    </div>
-    <button class="btn" onclick="s3()">▸ 同意并继续</button>
+    <button class="btn-agree" onclick="s3()" style="font-size:16px;width:100%;padding:16px;">
+      ▸ 查看综合判定
+    </button>
   `);
 }
 
-// S3: 假扫描
+// S3: 核心拷问 - 两个按钮
 function s3() {
+  denyClicks = 0;
+  updateCounter();
   h(`
-    <div class="card center">
-      <p class="red blink mb8">▌▌▌ 正在扫描设备 ▌▌▌</p>
-      <div class="bar"><div class="bar-fill" id="b1"></div></div>
-      <p class="dim" id="t1">初始化...</p>
-    </div>
-  `);
-
-  var jobs = [
-    [25, '读取联系人...', '发现 666 个未知实体'],
-    [45, '扫描相册...', '检测到 233 张表情包'],
-    [65, '分析通信记录...', '拦截到 999 条神秘信号'],
-    [82, '检索浏览器历史...', '发现深夜搜索记录 404 条'],
-    [94, '破解生物特征...', 'DNA 样本已采集'],
-    [100, '最终分析中...', '结果异常——'],
-  ];
-
-  jobs.forEach(function(j, i) {
-    setTimeout(function() {
-      document.getElementById('b1').style.width = j[0] + '%';
-      document.getElementById('t1').textContent = j[1];
-      if (j[2]) {
-        setTimeout(function() {
-          document.getElementById('t1').textContent = j[2];
-        }, 300);
-      }
-    }, i * 900);
-  });
-  setTimeout(s4, jobs.length * 900 + 800);
-}
-
-// S4: 输入名字
-function s4() {
-  flash(); flash();
-  h(`
-    <div class="card center" style="border-color:#600;">
-      <p class="fz18 red blink mb8">⚠️ 发现高危异常 ⚠️</p>
-      <p class="fz14 white mb16">该系统检测到一名「高危人员」<br>请确认目标身份：</p>
-      <input id="inp" type="text" placeholder="输入目标姓名..."
-        style="width:100%;padding:12px;background:transparent;border:1px solid #500;
-        color:#f00;font-size:16px;font-family:inherit;text-align:center;outline:none;border-radius:4px;">
-    </div>
-    <button class="btn" onclick="subName()">▸ 确认目标</button>
-  `);
-  var inp = document.getElementById('inp');
-  if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') subName(); });
-}
-window.subName = function() {
-  userName = document.getElementById('inp').value || '未知目标';
-  if (userName.length > 20) userName = userName.slice(0, 20);
-  s5();
-};
-
-// S5: 假数据泄露展示
-function s5() {
-  flash();
-  var fakeTime = new Date().toLocaleTimeString('zh-CN', {hour12: false});
-  var fakeIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
-  h(`
-    <div class="card center flicker" style="border-color:#700;">
-      <p class="fz22 red mb8">🔴 BREACHED 🔴</p>
-      <p class="white fz14 l2">
-        目标：[ <span class="red">${userName}</span> ]<br>
-        入侵时间：${fakeTime}<br>
-        IP地址：${fakeIP}<br>
-        设备指纹：已获取<br>
-        数字灵魂：已捕获<br>
+    <div class="card fade-in">
+      <p class="mid-text mb16">⚠️ 请根据以上数据回答</p>
+      <p style="font-size:22px;font-weight:800;line-height:1.6;">
+        <span class="yellow">臧yx</span> 是否<br>好吃且懒做？
       </p>
+      <p class="dim" style="margin-top:12px;">请做出公平公正的判断</p>
     </div>
-    <div class="card center">
-      <p class="red mb8">[ 正在窃取以下数据... ]</p>
-      <p class="dim l2">
-        ▓▓▓▓▓▓▓▓▓▓ 聊天记录 100%<br>
-        ▓▓▓▓▓▓▓▓▓▓ 浏览器历史 100%<br>
-        ▓▓▓▓▓▓▓▓▓▓ 深夜动态 100%<br>
-        ▓▓▓▓▓▓▓▓▓▓ 大脑内存 100%<br>
-      </p>
+    <div id="agreeArea" style="text-align:center;margin:16px 0;">
+      <button class="btn-agree" id="agreeBtn" onclick="finish()" style="width:85%;font-size:20px;padding:22px;">
+        ✅ 我认可<br><span style="font-size:12px;font-weight:400;color:#888;">（事实就是如此）</span>
+      </button>
     </div>
-    <button class="btn" onclick="s6()">▸ 查看窃取结果</button>
+    <div id="denyArea" style="text-align:center;margin:20px 0;position:relative;min-height:70px;display:flex;align-items:center;justify-content:center;">
+      <button class="btn-deny" id="denyBtn" ontouchstart="hitDeny(event)" onclick="hitDeny(event)">
+        ❌ 我不认可
+      </button>
+    </div>
+    <div class="tracker" id="tracker">仍需点击 <span id="remain">${requiredClicks}</span> 次「我不认可」才能提交</div>
   `);
 }
 
-// S6: 阴间诊断
-function s6() {
-  crashFlash(8, 120);
-  setTimeout(function() {
-    var diagnoses = [
-      ['精神状况', '极度不稳定', '建议立刻休息（但没用）'],
-      ['社交人格', '互联网抽象型', '线上线下判若两人'],
-      ['脑回路', '量子纠缠态', '连你自己都不知道在想啥'],
-      ['语言系统', '已崩溃', '只会发哈哈哈和表情包'],
-      ['睡眠质量', '不存在', '凌晨3点是你最清醒的时刻'],
-      ['精神状态', '遥遥领先', '#精神状态# 已成为你的标签'],
-      ['记忆能力', '选择性失忆', '记得十年前尴尬事，忘了昨天吃了啥'],
-      ['表情包库存', '溢出', '你手机里 90% 都是表情包'],
-      ['抽象指数', '超越测量上限', '仪器已过载烧毁'],
-    ];
-    var selected = diagnoses.sort(function() { return Math.random() - 0.5; }).slice(0, 5);
-
-    var rows = selected.map(function(d) {
-      return '<p class="white fz14">' + d[0] + '：<span class="red">' + d[1] + '</span><br><span class="dim">' + d[2] + '</span></p>';
-    }).join('<br>');
-
-    h(`
-      <div class="card" style="border-color:#600;">
-        <p class="fz18 red center mb16 blink">▌ ${userName} · 深度检测报告 ▌</p>
-        ${rows}
-      </div>
-      <div class="card center" style="border-color:#400;">
-        <p class="fz14 white mb8">综合评定：</p>
-        <p class="fz22 red glitch-txt">⚠️ 高危抽象个体 ⚠️</p>
-        <p class="dim">建议立即远离正常人群</p>
-        <p class="dim">威胁等级：<span class="red blink">SSS+</span></p>
-      </div>
-      <button class="btn" onclick="s7()">▸ 进入下一阶段</button>
-    `);
-  }, 1200);
-}
-
-// S7: 多选项灵魂拷问
-function s7() {
-  h(`
-    <div class="card center">
-      <p class="red mb8">[ 灵魂审讯程序已启动 ]</p>
-      <p class="fz14 white">以下问题必须作答<br>撒谎将被系统标记为「嘴硬」</p>
-    </div>
-    <div class="card">
-      <p class="fz14 white mb8">Q1：凌晨三点，你在做什么？</p>
-    </div>
-    <button class="btn" onclick="pick('q1a')">A. 刷视频刷到精神恍惚</button>
-    <button class="btn" onclick="pick('q1b')">B. 思考宇宙和人生的尽头</button>
-    <button class="btn" onclick="pick('q1c')">C. 在群里发癫</button>
-    <button class="btn" onclick="pick('q1d')">D. 以上全部</button>
-  `);
-}
-window.pick = function(opt) {
-  var btns = document.querySelectorAll('.btn');
-  btns.forEach(function(b) { b.disabled = true; });
-  flash();
-  setTimeout(function() {
-    h(`
-      <div class="card center">
-        <p class="red mb8">[ Q1 已完成 ]</p>
-        <p class="dim">答案已记录</p>
-        <p class="dim blink">AI分析中...</p>
-      </div>
-      <div class="card">
-        <p class="fz14 white mb8">Q2：看到这条消息时你是什么表情？</p>
-      </div>
-      <button class="btn" onclick="pick2('q2a')">A. 😨</button>
-      <button class="btn" onclick="pick2('q2b')">B. 😱</button>
-      <button class="btn" onclick="pick2('q2c')">C. 🤡</button>
-      <button class="btn" onclick="pick2('q2d')">D. 面无表情但内心波涛汹涌</button>
-    `);
-  }, 600);
-};
-window.pick2 = function(opt) {
-  var btns = document.querySelectorAll('.btn');
-  btns.forEach(function(b) { b.disabled = true; });
-  flash(); flash();
-  setTimeout(function() {
-    h(`
-      <div class="card center" style="border-color:#700;">
-        <p class="fz28 red mb8">⚠️</p>
-        <p class="fz14 white">你已通过所有测试</p>
-        <p class="fz14 white">但——</p>
-        <p class="fz18 red glitch-txt blink">系统不想放过你</p>
-      </div>
-      <button class="btn" onclick="s8()">▸ 继续（无法逃跑）</button>
-    `);
-  }, 600);
-};
-
-// S8: 假崩溃
-function s8() {
-  crashFlash(12, 90);
-  document.body.style.background = '#0a0000';
-  setTimeout(function() {
-    h(`
-      <div class="card center shake" style="border-color:#800;">
-        <p class="fz36 red mb8">☠</p>
-        <p class="fz18 red glitch-txt">SYSTEM CORRUPTED</p>
-        <p class="dim">0x000000F4</p>
-        <p class="dim">KERNEL_DATA_INPAGE_ERROR</p>
-        <p class="dim blink">物理内存转储中...</p>
-      </div>
-      <div class="card flicker" style="border-color:#600;">
-        <p class="fz14 white center">
-          系统检测到<br>
-          <span class="red fz18">${userName}</span><br>
-          的数字灵魂与正常人类不兼容<br><br>
-          <span class="red">建议：</span><br>
-          立即格式化人际关系<br>
-          重新安装大脑操作系统<br>
-        </p>
-      </div>
-      <button class="btn" onclick="s9()">▸ 尝试修复（很可能失败）</button>
-    `);
-  }, 1400);
-}
-
-// S9: 假修复 + 最终诊断
-function s9() {
-  h(`
-    <div class="card center">
-      <p class="red mb8">[ 正在尝试修复... ]</p>
-      <div class="bar"><div class="bar-fill" id="b2"></div></div>
-      <p class="dim" id="t2">连接赛博冥界服务器...</p>
-    </div>
-  `);
-  var fixes = [
-    [30, '扫描数据损坏区...', '损坏严重，无法修复'],
-    [55, '尝试重置脑回路...', '重置失败，脑回路过于抽象'],
-    [70, '联系冥界技术支持...', '技术支持已下班'],
-    [85, '启动终极修复方案...', '方案已崩溃'],
-    [99, '放弃修复...', '系统选择接受现实'],
-  ];
-  fixes.forEach(function(f, i) {
-    setTimeout(function() {
-      document.getElementById('b2').style.width = f[0] + '%';
-      document.getElementById('t2').textContent = f[1];
-      if (f[2]) {
-        setTimeout(function() {
-          document.getElementById('t2').textContent = f[1] + ' — ' + f[2];
-        }, 350);
-      }
-    }, i * 800);
-  });
-  setTimeout(s10, fixes.length * 800 + 800);
-}
-
-// S10: 最终阴间诊断书
-function s10() {
-  crashFlash(6, 150);
-  document.body.style.background = '#000';
-  var titles = [
-    '赛博冥界永久居民',
-    '互联网数字幽灵',
-    '深夜抽象亡灵',
-    '表情包非物质遗产',
-    '人类社交系统BUG',
-    '精神不稳定核心成员',
-    '脑电波紊乱携带者',
-    '社交媒体重度成瘾者',
-    '现实与网络人格分裂体',
-    '已确认不可修复个体',
-    '抽象文化的最终形态',
-    '凌晨三点活跃物种',
-  ];
-  var t = titles[Math.floor(Math.random() * titles.length)];
-
-  h(`
-    <div class="card center zoom" style="border-color:#800;">
-      <p class="fz28 mb8">💀</p>
-      <p class="fz18 red mb16 glitch-txt">[ 最终诊断书 ]</p>
-      <p class="fz14 white l2 mb8">
-        经赛博冥界AI系统深度分析<br>
-        结合区块链+云计算+量子计算<br>
-        对目标 <span class="red fz18">${userName}</span> 作出以下判定：
-      </p>
-      <div class="card" style="border-color:#600;">
-        <p class="fz22 red center mb8">${t}</p>
-        <p class="fz14 white center l2">
-          诊断编号：#${Math.random().toString(36).substring(2, 10).toUpperCase()}<br>
-          签发机构：赛博冥界管理局<br>
-          有效期限：<span class="red blink">永久</span><br>
-          备注：此诊断无法上诉
-        </p>
-      </div>
-      <p class="dim mt8">* 系统将于 5 秒后自毁 *</p>
-    </div>
-    <button class="btn" onclick="s11()">▸ 紧急逃生出口</button>
-  `);
-}
-
-// S11: 假自毁倒计时
-function s11() {
-  var count = 10;
-  function tick() {
-    if (count < 0) {
-      h(`
-        <div class="card center flicker" style="border-color:#f00;">
-          <p class="fz36 red mb16">☠</p>
-          <p class="fz18 red glitch-txt">SYSTEM DESTROYED</p>
-          <p class="dim">但其实什么都没发生</p>
-          <p class="dim">你被骗了</p>
-        </div>
-        <button class="btn" onclick="location.reload()">▸ 从头再来</button>
-        <p class="dim center" style="margin-top:20px;">纯属娱乐 切勿当真</p>
-      `);
-      return;
-    }
-    flash();
-    h(`
-      <div class="card center shake">
-        <p class="fz28 red mb8 blink">⚠️ 系统自毁中 ⚠️</p>
-        <p class="fz36 red glitch-txt">${count}</p>
-        <p class="dim">逃跑已经来不及了</p>
-      </div>
-    `);
-    count--;
-    setTimeout(tick, 800);
+function updateCounter() {
+  var remain = requiredClicks - denyClicks;
+  if (remain <= 0) remain = 0;
+  var remainEl = document.getElementById('remain');
+  var trackerEl = document.getElementById('tracker');
+  if (remainEl) remainEl.textContent = remain;
+  if (trackerEl) {
+    if (remain <= 0) trackerEl.innerHTML = '<span class="green">✅ 够了够了，你可以选了</span>';
+    else if (denyClicks >= 7) trackerEl.innerHTML = '仍需点击 <span id="remain" class="yellow">' + remain + '</span> 次「我不认可」才能提交  快了快了';
+    else trackerEl.innerHTML = '仍需点击 <span id="remain">' + remain + '</span> 次「我不认可」才能提交';
   }
-  tick();
+}
+
+window.hitDeny = function(e) {
+  if (e) e.preventDefault();
+  if (denyBtnMoving) return;
+  denyBtnMoving = true;
+
+  denyClicks++;
+  showToast(zingers[(denyClicks - 1) % zingers.length]);
+  updateCounter();
+
+  var denyArea = document.getElementById('denyArea');
+  var denyBtn = document.getElementById('denyBtn');
+
+  if (denyClicks >= requiredClicks) {
+    denyBtn.style.border = '2px solid #7f7';
+    denyBtn.style.color = '#7f7';
+    denyBtn.style.fontSize = '20px';
+    denyBtn.style.padding = '22px 32px';
+    denyBtn.textContent = '😤 我不认可！（够了！）';
+    denyBtn.onclick = function(e) { e.preventDefault(); finish(); };
+    denyBtnMoving = false;
+    return;
+  }
+
+  // 缩小
+  var scale = Math.max(0.35, 1 - denyClicks * 0.06);
+  denyBtn.style.transform = 'scale(' + scale + ')';
+
+  // 随机跑开
+  var maxX = denyArea.clientWidth - denyBtn.offsetWidth * scale;
+  var maxY = denyArea.clientHeight - denyBtn.offsetHeight * scale;
+  maxX = Math.max(maxX, 40);
+  maxY = Math.max(maxY, 20);
+  var x = Math.random() * maxX - maxX/2;
+  var y = Math.random() * maxY - maxY/2;
+  denyBtn.style.position = 'relative';
+  denyBtn.style.left = x + 'px';
+  denyBtn.style.top = y + 'px';
+
+  // 抖动
+  denyArea.classList.add('shake');
+  setTimeout(function() { denyArea.classList.remove('shake'); }, 400);
+
+  var agreeBtn = document.getElementById('agreeBtn');
+  var agreeScale = 1 + denyClicks * 0.06;
+  agreeBtn.style.transform = 'scale(' + agreeScale + ')';
+  agreeBtn.style.transition = 'transform 0.3s ease';
+
+  setTimeout(function() { denyBtnMoving = false; }, 300);
+};
+
+// 结局
+function finish() {
+  document.body.style.background = '#0d0d1a';
+  h(`
+    <div class="cert fade-in">
+      <div class="cert-inner">
+        <p class="dim">🏆 大学生综合素质评估委员会 🏆</p>
+        <p class="dim" style="margin:8px 0;">（全体室友 + AI + 外卖小哥联合认证）</p>
+        <p style="font-size:60px;margin:16px 0;">😴</p>
+        <p class="mid-text yellow" style="margin:8px 0;">经综合评估，一致认定</p>
+        <p style="font-size:28px;font-weight:900;color:#ffd700;margin:12px 0;letter-spacing:3px;">
+          臧 yx
+        </p>
+        <p style="font-size:22px;font-weight:800;color:#fff;margin:12px 0;line-height:1.8;">
+          荣获<br><span style="font-size:36px;color:#ffd700;">「睡神」</span><br>荣誉称号
+        </p>
+        <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:16px;margin:16px 0;text-align:left;line-height:2.2;">
+          <p class="dim">🏅 日均睡眠时长：<span class="yellow">10h+</span>（保守估计）</p>
+          <p class="dim">🏅 起床失败次数：<span class="red">不计其数</span></p>
+          <p class="dim">🏅 寝室懒人指数：<span class="yellow">断层第一</span></p>
+          <p class="dim">🏅 外卖平台等级：<span class="yellow">至尊VIP</span></p>
+          <p class="dim">🏅 躺平学研究：<span class="yellow">已达博士后水平</span></p>
+        </div>
+        <p class="dim">发证方：你的好朋友们</p>
+        <p class="dim">有效期：永久（除非你明天真的早起了）</p>
+        <p class="dim" style="margin-top:4px;">证书编号：ZZZ-${new Date().getFullYear()}-${String(denyClicks).padStart(2,'0')}</p>
+      </div>
+    </div>
+    <button class="btn-agree" onclick="location.reload()" style="width:100%;margin-top:20px;font-size:16px;padding:16px;">
+      🔄 换个人再测
+    </button>
+    <p style="text-align:center;margin-top:24px;color:#444;font-size:13px;">纯属娱乐 · 感情深才这样 · 别打我</p>
+  `);
+  counterEl.textContent = '';
 }
 
 s1();
