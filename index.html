@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>系统检测中...</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0a;
+    color: #0f0;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 20px;
+    overflow-x: hidden;
+  }
+  .scan-line {
+    position: fixed; top: 0; left: 0; width: 100%; height: 2px;
+    background: rgba(0,255,0,0.3);
+    animation: scan 3s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes scan {
+    0% { top: 0; } 100% { top: 100%; }
+  }
+  h1 { font-size: 20px; margin: 20px 0; letter-spacing: 2px; text-align: center; }
+  .logo { font-size: 40px; text-align: center; margin-top: 30px; }
+  .panel {
+    width: 100%; max-width: 380px;
+    background: rgba(0,255,0,0.05);
+    border: 1px solid rgba(0,255,0,0.3);
+    border-radius: 12px; padding: 16px; margin: 10px 0;
+  }
+  .progress-bar {
+    width: 100%; height: 10px;
+    background: rgba(0,255,0,0.1);
+    border-radius: 5px; overflow: hidden; margin: 8px 0;
+  }
+  .progress-fill {
+    height: 100%; background: #0f0;
+    border-radius: 5px; transition: width 0.3s;
+    width: 0%;
+  }
+  .result { display: none; text-align: center; }
+  .result h2 { font-size: 42px; animation: bounce 0.6s ease; }
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  .big-emoji { font-size: 80px; animation: spin 1s ease-out; }
+  @keyframes spin {
+    0% { transform: rotate(0deg) scale(0); }
+    80% { transform: rotate(360deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+  .step { margin: 4px 0; font-size: 13px; opacity: 0.8; }
+  .step.done { opacity: 1; }
+  .blink { animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .fake-btn {
+    display: block; width: 100%; padding: 14px;
+    background: #0f0; color: #000; border: none;
+    border-radius: 25px; font-size: 18px; font-weight: bold;
+    margin: 14px 0; cursor: pointer; letter-spacing: 1px;
+  }
+  .fake-btn:active { background: #0a0; }
+  .msg-box {
+    background: rgba(255,0,255,0.1);
+    border: 1px solid #f0f; border-radius: 12px;
+    padding: 20px; margin: 14px 0; text-align: center;
+    font-size: 16px; line-height: 1.8;
+  }
+  .hidden { display: none; }
+  .tag {
+    display: inline-block;
+    background: #f0f; color: #fff;
+    padding: 4px 12px; border-radius: 12px;
+    font-size: 12px; margin: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="scan-line"></div>
+
+<!-- 阶段1：伪装系统扫描 -->
+<div id="phase1">
+  <div class="logo">🛡️</div>
+  <h1>AI 手机安全检测系统 v6.6.6</h1>
+  <div class="panel">
+    <p style="text-align:center;font-size:13px;">正在启动深度扫描引擎...</p>
+    <div class="progress-bar"><div class="progress-fill" id="bar1"></div></div>
+    <p id="step1" class="step blink">▸ 初始化安全模块...</p>
+    <p id="step2" class="step">▸ 检测系统环境...</p>
+    <p id="step3" class="step">▸ 扫描硬件信息...</p>
+    <p id="step4" class="step">▸ AI 深度学习分析中...</p>
+    <p id="step5" class="step">▸ 检索生物特征数据库...</p>
+  </div>
+</div>
+
+<!-- 阶段2：检测结果 -->
+<div id="phase2" class="hidden">
+  <div class="panel" style="text-align:center;">
+    <div class="big-emoji">🔍</div>
+    <h2 style="color:#f0f;margin:10px 0;">异常发现！</h2>
+    <p style="color:#fff;font-size:14px;">检测到该设备存在以下特征：</p>
+  </div>
+  <div class="panel">
+    <p class="step done">✅ 设备型号：<span style="color:#fff;" id="devModel">--</span></p>
+    <p class="step done">✅ 操作系统：<span style="color:#fff;" id="devOS">--</span></p>
+    <p class="step done">✅ 屏幕分辨率：<span style="color:#fff;" id="devRes">--</span></p>
+    <p class="step done">⚠️ 检测到「可爱因子」超标</p>
+    <p class="step done">⚠️ 检测到「沙雕指数」异常</p>
+    <p class="step done">🔴 发现高危特征：<span style="color:#f0f;">顶级大聪明</span></p>
+  </div>
+  <button class="fake-btn" onclick="showResult()">点击查看详细报告 →</button>
+</div>
+
+<!-- 阶段3：终极揭秘 -->
+<div id="phase3" class="hidden">
+  <div class="panel" style="text-align:center;">
+    <div class="big-emoji">🎉</div>
+    <h2 style="color:#0f0;">鉴定完毕！</h2>
+  </div>
+  <div class="msg-box">
+    <p style="font-size:22px;font-weight:bold;color:#ff0;">👑 臧yx 👑</p>
+    <p style="color:#fff;margin:8px 0;">
+      经AI神经网络深度分析<br>
+      结合大数据 + 云计算 + 区块链<br>
+      一致认定你为：
+    </p>
+    <p style="font-size:24px;font-weight:bold;color:#0f0;margin:10px 0;">
+      🏆 宇宙无敌小可爱 🏆
+    </p>
+    <div>
+      <span class="tag">🌍 全球排名：No.1</span>
+      <span class="tag">⭐ 可爱指数：∞</span>
+      <span class="tag">🔥 魅力值：MAX</span>
+      <span class="tag">🎯 智商：666</span>
+    </div>
+    <p style="color:#aaa;font-size:12px;margin-top:10px;">
+      此证书由「整蛊AI系统」颁发<br>
+      有效期：永久 🌟
+    </p>
+  </div>
+  <button class="fake-btn" style="background:#f0f;color:#fff;" onclick="location.reload()">
+    🔄 再测一次
+  </button>
+  <p style="color:#555;font-size:11px;text-align:center;margin-top:10px;">
+    * 本页面纯属娱乐，别打我 😜
+  </p>
+</div>
+
+<script>
+(function() {
+  var ua = navigator.userAgent;
+  var isIOS = /iPhone|iPad|iPod/.test(ua);
+  var isAndroid = /Android/.test(ua);
+
+  document.getElementById('devModel').textContent = isIOS ? 'iPhone 18 Pro Max' : (isAndroid ? 'Android 赛博手机' : '不明设备');
+  document.getElementById('devOS').textContent = isIOS ? 'iOS 29.9' : (isAndroid ? 'Android 99.0' : '未知');
+  document.getElementById('devRes').textContent = window.screen.width + 'x' + window.screen.height;
+
+  function animStep(id, delay) {
+    setTimeout(function() {
+      var el = document.getElementById(id);
+      el.classList.remove('blink');
+      el.classList.add('done');
+    }, delay);
+  }
+
+  function animBar(target, delay) {
+    setTimeout(function() {
+      document.getElementById('bar1').style.width = target + '%';
+    }, delay);
+  }
+
+  animBar(30, 400);
+  animStep('step1', 500);
+  animBar(55, 1000);
+  animStep('step2', 1200);
+  animBar(70, 1800);
+  animStep('step3', 2000);
+  animBar(85, 2600);
+  animStep('step4', 2800);
+  animBar(95, 3400);
+  animStep('step5', 3600);
+  animBar(100, 4200);
+
+  setTimeout(function() {
+    document.getElementById('phase1').classList.add('hidden');
+    document.getElementById('phase2').classList.remove('hidden');
+  }, 4800);
+})();
+
+function showResult() {
+  document.getElementById('phase2').classList.add('hidden');
+  document.getElementById('phase3').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
