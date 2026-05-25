@@ -3,200 +3,427 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>系统检测中...</title>
+<title>Loading...</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #0a0a0a;
-    color: #0f0;
+    font-family: 'Courier New', -apple-system, monospace;
+    background: #000; color: #0f0; min-height: 100vh;
     display: flex; flex-direction: column; align-items: center;
-    min-height: 100vh; padding: 20px;
-    overflow-x: hidden;
+    padding: 16px; overflow-x: hidden;
+    transition: background 0.5s;
   }
-  .scan-line {
-    position: fixed; top: 0; left: 0; width: 100%; height: 2px;
-    background: rgba(0,255,0,0.3);
-    animation: scan 3s linear infinite;
-    pointer-events: none;
+  .glitch { animation: glitch 0.3s infinite; }
+  @keyframes glitch {
+    0% { transform: translate(2px, 1px); }
+    25% { transform: translate(-2px, -1px); }
+    50% { transform: translate(-1px, 2px); }
+    75% { transform: translate(1px, -2px); }
+    100% { transform: translate(0, 0); }
   }
-  @keyframes scan {
-    0% { top: 0; } 100% { top: 100%; }
-  }
-  h1 { font-size: 20px; margin: 20px 0; letter-spacing: 2px; text-align: center; }
-  .logo { font-size: 40px; text-align: center; margin-top: 30px; }
-  .panel {
-    width: 100%; max-width: 380px;
-    background: rgba(0,255,0,0.05);
+  .container { width: 100%; max-width: 400px; }
+  .card {
+    background: rgba(0,255,0,0.03);
     border: 1px solid rgba(0,255,0,0.3);
-    border-radius: 12px; padding: 16px; margin: 10px 0;
+    border-radius: 10px; padding: 18px; margin: 12px 0;
   }
-  .progress-bar {
-    width: 100%; height: 10px;
-    background: rgba(0,255,0,0.1);
-    border-radius: 5px; overflow: hidden; margin: 8px 0;
+  .card.pink { border-color: #f0f; background: rgba(255,0,255,0.05); }
+  .card.blue { border-color: #0ff; background: rgba(0,255,255,0.05); }
+  .card.yellow { border-color: #ff0; background: rgba(255,255,0,0.05); }
+  .btn {
+    display: block; width: 100%; padding: 15px;
+    border: 2px solid #0f0; background: transparent;
+    color: #0f0; font-family: inherit; font-size: 16px;
+    border-radius: 30px; margin: 10px 0; cursor: pointer;
+    transition: all 0.2s; letter-spacing: 1px;
   }
-  .progress-fill {
-    height: 100%; background: #0f0;
-    border-radius: 5px; transition: width 0.3s;
-    width: 0%;
+  .btn:active { background: #0f0; color: #000; transform: scale(0.97); }
+  .btn.pink { border-color: #f0f; color: #f0f; }
+  .btn.pink:active { background: #f0f; color: #000; }
+  .btn.blue { border-color: #0ff; color: #0ff; }
+  .btn.blue:active { background: #0ff; color: #000; }
+  .btn.yellow { border-color: #ff0; color: #ff0; }
+  .btn.yellow:active { background: #ff0; color: #000; }
+  .btn.huge { padding: 22px; font-size: 22px; font-weight: bold; }
+  .bar {
+    width: 100%; height: 8px; background: rgba(0,255,0,0.1);
+    border-radius: 4px; overflow: hidden; margin: 10px 0;
   }
-  .result { display: none; text-align: center; }
-  .result h2 { font-size: 42px; animation: bounce 0.6s ease; }
-  @keyframes bounce {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+  .bar-inner {
+    height: 100%; background: #0f0; border-radius: 4px;
+    width: 0%; transition: width 0.5s;
   }
-  .big-emoji { font-size: 80px; animation: spin 1s ease-out; }
-  @keyframes spin {
-    0% { transform: rotate(0deg) scale(0); }
-    80% { transform: rotate(360deg) scale(1.2); }
-    100% { transform: rotate(360deg) scale(1); }
+  .bar-inner.pink { background: #f0f; }
+  .center { text-align: center; }
+  .flex-row { display: flex; gap: 10px; }
+  .flex-row .btn { flex: 1; }
+  .hidden { display: none !important; }
+  .shake { animation: shake 0.5s ease; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
   }
-  .step { margin: 4px 0; font-size: 13px; opacity: 0.8; }
-  .step.done { opacity: 1; }
-  .blink { animation: blink 1s step-end infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
-  .fake-btn {
-    display: block; width: 100%; padding: 14px;
-    background: #0f0; color: #000; border: none;
-    border-radius: 25px; font-size: 18px; font-weight: bold;
-    margin: 14px 0; cursor: pointer; letter-spacing: 1px;
+  .zoom-in { animation: zoomIn 0.5s ease; }
+  @keyframes zoomIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
   }
-  .fake-btn:active { background: #0a0; }
-  .msg-box {
-    background: rgba(255,0,255,0.1);
-    border: 1px solid #f0f; border-radius: 12px;
-    padding: 20px; margin: 14px 0; text-align: center;
-    font-size: 16px; line-height: 1.8;
+  .fade-in { animation: fadeIn 0.8s ease; }
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
-  .hidden { display: none; }
-  .tag {
-    display: inline-block;
-    background: #f0f; color: #fff;
-    padding: 4px 12px; border-radius: 12px;
-    font-size: 12px; margin: 4px;
+  .big { font-size: 50px; }
+  .huge { font-size: 70px; }
+  .em { font-size: 18px; }
+  .dim { opacity: 0.5; font-size: 12px; }
+  .rainbow {
+    background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
+  .typewriter {
+    overflow: hidden; white-space: nowrap;
+    border-right: 2px solid #0f0;
+    animation: typing 2s steps(30), blink 0.5s step-end infinite;
+  }
+  @keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  @keyframes blink {
+    50% { border-color: transparent; }
+  }
+  .fake-options {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  }
+  .fake-option {
+    padding: 10px 16px; border: 1px solid #333;
+    border-radius: 20px; font-size: 13px; cursor: pointer;
+    color: #aaa; background: rgba(255,255,255,0.02);
+    transition: all 0.2s;
+  }
+  .fake-option:active, .fake-option.selected {
+    border-color: #0f0; color: #0f0; background: rgba(0,255,0,0.1);
+  }
+  .emoji-row { font-size: 40px; letter-spacing: 8px; }
 </style>
 </head>
 <body>
 
-<div class="scan-line"></div>
-
-<!-- 阶段1：伪装系统扫描 -->
-<div id="phase1">
-  <div class="logo">🛡️</div>
-  <h1>AI 手机安全检测系统 v6.6.6</h1>
-  <div class="panel">
-    <p style="text-align:center;font-size:13px;">正在启动深度扫描引擎...</p>
-    <div class="progress-bar"><div class="progress-fill" id="bar1"></div></div>
-    <p id="step1" class="step blink">▸ 初始化安全模块...</p>
-    <p id="step2" class="step">▸ 检测系统环境...</p>
-    <p id="step3" class="step">▸ 扫描硬件信息...</p>
-    <p id="step4" class="step">▸ AI 深度学习分析中...</p>
-    <p id="step5" class="step">▸ 检索生物特征数据库...</p>
-  </div>
-</div>
-
-<!-- 阶段2：检测结果 -->
-<div id="phase2" class="hidden">
-  <div class="panel" style="text-align:center;">
-    <div class="big-emoji">🔍</div>
-    <h2 style="color:#f0f;margin:10px 0;">异常发现！</h2>
-    <p style="color:#fff;font-size:14px;">检测到该设备存在以下特征：</p>
-  </div>
-  <div class="panel">
-    <p class="step done">✅ 设备型号：<span style="color:#fff;" id="devModel">--</span></p>
-    <p class="step done">✅ 操作系统：<span style="color:#fff;" id="devOS">--</span></p>
-    <p class="step done">✅ 屏幕分辨率：<span style="color:#fff;" id="devRes">--</span></p>
-    <p class="step done">⚠️ 检测到「可爱因子」超标</p>
-    <p class="step done">⚠️ 检测到「沙雕指数」异常</p>
-    <p class="step done">🔴 发现高危特征：<span style="color:#f0f;">顶级大聪明</span></p>
-  </div>
-  <button class="fake-btn" onclick="showResult()">点击查看详细报告 →</button>
-</div>
-
-<!-- 阶段3：终极揭秘 -->
-<div id="phase3" class="hidden">
-  <div class="panel" style="text-align:center;">
-    <div class="big-emoji">🎉</div>
-    <h2 style="color:#0f0;">鉴定完毕！</h2>
-  </div>
-  <div class="msg-box">
-    <p style="font-size:22px;font-weight:bold;color:#ff0;">👑 臧yx 👑</p>
-    <p style="color:#fff;margin:8px 0;">
-      经AI神经网络深度分析<br>
-      结合大数据 + 云计算 + 区块链<br>
-      一致认定你为：
-    </p>
-    <p style="font-size:24px;font-weight:bold;color:#0f0;margin:10px 0;">
-      🏆 宇宙无敌小可爱 🏆
-    </p>
-    <div>
-      <span class="tag">🌍 全球排名：No.1</span>
-      <span class="tag">⭐ 可爱指数：∞</span>
-      <span class="tag">🔥 魅力值：MAX</span>
-      <span class="tag">🎯 智商：666</span>
-    </div>
-    <p style="color:#aaa;font-size:12px;margin-top:10px;">
-      此证书由「整蛊AI系统」颁发<br>
-      有效期：永久 🌟
-    </p>
-  </div>
-  <button class="fake-btn" style="background:#f0f;color:#fff;" onclick="location.reload()">
-    🔄 再测一次
-  </button>
-  <p style="color:#555;font-size:11px;text-align:center;margin-top:10px;">
-    * 本页面纯属娱乐，别打我 😜
-  </p>
-</div>
+<div class="container" id="app"></div>
 
 <script>
 (function() {
-  var ua = navigator.userAgent;
-  var isIOS = /iPhone|iPad|iPod/.test(ua);
-  var isAndroid = /Android/.test(ua);
+  var root = document.getElementById('app');
+  var userName = '';
 
-  document.getElementById('devModel').textContent = isIOS ? 'iPhone 18 Pro Max' : (isAndroid ? 'Android 赛博手机' : '不明设备');
-  document.getElementById('devOS').textContent = isIOS ? 'iOS 29.9' : (isAndroid ? 'Android 99.0' : '未知');
-  document.getElementById('devRes').textContent = window.screen.width + 'x' + window.screen.height;
+  function h(t) { root.innerHTML = t; }
 
-  function animStep(id, delay) {
-    setTimeout(function() {
-      var el = document.getElementById(id);
-      el.classList.remove('blink');
-      el.classList.add('done');
-    }, delay);
+  // ====== S1: 假系统启动 ======
+  function s1() {
+    h(`
+      <div class="card center fade-in">
+        <p class="dim">SYSTEM BOOT v9.9.9</p>
+        <p class="em">████████████████████</p>
+        <p class="dim">INITIALIZING...</p>
+      </div>
+    `);
+    setTimeout(s2, 2000);
   }
 
-  function animBar(target, delay) {
-    setTimeout(function() {
-      document.getElementById('bar1').style.width = target + '%';
-    }, delay);
+  // ====== S2: 假权限请求 ======
+  function s2() {
+    h(`
+      <div class="card center fade-in">
+        <div class="emoji-row">🔬🧬🔭</div>
+        <p class="em" style="margin:10px 0;">AI 深度人格检测系统</p>
+        <p class="dim">需要获取以下权限以继续：</p>
+      </div>
+      <div class="card fade-in">
+        <p class="dim" style="color:#0f0;">☑ 读取脑电波数据</p>
+        <p class="dim" style="color:#0f0;">☑ 扫描今日运势</p>
+        <p class="dim" style="color:#0f0;">☑ 连接宇宙数据库</p>
+        <p class="dim" style="color:#0f0;">☑ 接入5G/6G/7G网络</p>
+        <p class="dim blink">☐ 征求本人同意...</p>
+      </div>
+      <button class="btn btn huge" onclick="clickAgree()">
+        我同意以上所有条款
+      </button>
+      <button class="btn btn pink" onclick="clickReject()">
+        我想拒绝
+      </button>
+    `);
   }
 
-  animBar(30, 400);
-  animStep('step1', 500);
-  animBar(55, 1000);
-  animStep('step2', 1200);
-  animBar(70, 1800);
-  animStep('step3', 2000);
-  animBar(85, 2600);
-  animStep('step4', 2800);
-  animBar(95, 3400);
-  animStep('step5', 3600);
-  animBar(100, 4200);
+  window.clickAgree = function() {
+    var btn = document.querySelector('.btn.huge');
+    btn.textContent = '✅ 已同意';
+    btn.style.background = '#0f0'; btn.style.color = '#000';
+    setTimeout(s3, 800);
+  };
 
-  setTimeout(function() {
-    document.getElementById('phase1').classList.add('hidden');
-    document.getElementById('phase2').classList.remove('hidden');
-  }, 4800);
+  window.clickReject = function() {
+    var btn = document.querySelector('.btn.pink');
+    btn.textContent = '😈 拒绝无效，自动同意';
+    btn.style.background = '#f0f'; btn.style.color = '#fff';
+    document.querySelector('.btn.huge').textContent = '✅ 强制已同意';
+    document.querySelector('.btn.huge').style.background = '#0f0';
+    document.querySelector('.btn.huge').style.color = '#000';
+    setTimeout(s3, 800);
+  };
+
+  // ====== S3: 假扫描动画 ======
+  function s3() {
+    h(`
+      <div class="card center fade-in">
+        <p class="em blink">🛰️ 正在全宇宙范围扫描...</p>
+        <div class="bar"><div class="bar-inner" id="scanBar"></div></div>
+        <p class="dim" id="scanText">初始化量子引擎...</p>
+      </div>
+    `);
+    var steps = [
+      [20, '调谐量子频率...'],
+      [45, '接入银河系数据库...'],
+      [60, '破解 DNA 双螺旋...'],
+      [75, '深度学习你的午饭记录...'],
+      [88, '检索外星文明档案...'],
+      [95, 'AI正在疯狂分析...'],
+      [100, '✅ 扫描完成！数据异常丰富！'],
+    ];
+    steps.forEach(function(s, i) {
+      setTimeout(function() {
+        document.getElementById('scanBar').style.width = s[0] + '%';
+        document.getElementById('scanText').textContent = s[1];
+      }, i * 700);
+    });
+    setTimeout(s4, steps.length * 700 + 600);
+  }
+
+  // ====== S4: 灵魂拷问选择题 ======
+  function s4() {
+    h(`
+      <div class="card center fade-in">
+        <p class="em">🤔 灵魂第一问</p>
+        <p class="dim">请诚实作答（撒谎会被AI识破）</p>
+      </div>
+      <div class="card blue fade-in">
+        <p class="em">深夜睡不着时你在想什么？</p>
+      </div>
+      <button class="btn blue" onclick="q1pick(0)">🌌 宇宙的尽头是什么</button>
+      <button class="btn blue" onclick="q1pick(1)">🍔 明天早上吃啥</button>
+      <button class="btn blue" onclick="q1pick(2)">🧠 我刚刚是不是说错话了</button>
+      <button class="btn blue" onclick="q1pick(3)">🎮 刚才那局队友太菜了</button>
+    `);
+  }
+
+  window.q1pick = function(n) {
+    var btns = document.querySelectorAll('.btn.blue');
+    btns.forEach(function(b, i) {
+      b.disabled = true;
+      if (i === n) { b.style.background = '#0ff'; b.style.color = '#000'; }
+      else b.style.opacity = '0.3';
+    });
+    setTimeout(s5, 600);
+  };
+
+  // ====== S5: 第二问 ======
+  function s5() {
+    h(`
+      <div class="card center fade-in">
+        <p class="em">🤔 灵魂第二问</p>
+      </div>
+      <div class="card pink fade-in">
+        <p class="em">你觉得自己是什么类型的生物？</p>
+      </div>
+      <button class="btn pink" onclick="q2pick(0)">🦄 彩虹独角兽</button>
+      <button class="btn pink" onclick="q2pick(1)">👽 伪装成人类的猫</button>
+      <button class="btn pink" onclick="q2pick(2)">🧌 深夜上网小精灵</button>
+      <button class="btn pink" onclick="q2pick(3)">🐒 纯血吗喽</button>
+    `);
+  }
+
+  window.q2pick = function(n) {
+    var btns = document.querySelectorAll('.btn.pink');
+    btns.forEach(function(b, i) {
+      b.disabled = true;
+      if (i === n) { b.style.background = '#f0f'; b.style.color = '#fff'; }
+      else b.style.opacity = '0.3';
+    });
+    setTimeout(s6, 600);
+  };
+
+  // ====== S6: 第三问 (填空) ======
+  function s6() {
+    h(`
+      <div class="card center fade-in">
+        <p class="em">🤔 灵魂终极问</p>
+      </div>
+      <div class="card yellow fade-in">
+        <p class="em">请输入你的名字（真名可加分）：</p>
+        <input id="nameInput" type="text" placeholder="在此输入..."
+          style="width:100%;padding:12px;background:transparent;border:1px solid #ff0;
+          color:#ff0;font-size:18px;font-family:inherit;border-radius:10px;text-align:center;
+          margin-top:10px;outline:none;">
+      </div>
+      <button class="btn yellow" onclick="submitName()">🔮 确认并开始终极分析</button>
+    `);
+    document.getElementById('nameInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') submitName();
+    });
+  }
+
+  window.submitName = function() {
+    userName = document.getElementById('nameInput').value || '神秘人';
+    s7();
+  };
+
+  // ====== S7: 假严肃分析 ======
+  function s7() {
+    h(`
+      <div class="card center fade-in">
+        <div class="emoji-row">🧬🔬🧪</div>
+        <p class="em blink">DNA + AI + 量子 三重分析中</p>
+        <p class="dim">目标：${userName}</p>
+      </div>
+      <div class="card fade-in">
+        <div class="bar"><div class="bar-inner pink" id="barA"></div></div>
+        <p class="dim">基因序列对比中... <span id="txtA"></span></p>
+        <div class="bar" style="margin-top:10px;"><div class="bar-inner" id="barB"></div></div>
+        <p class="dim">脑电波频谱分析... <span id="txtB"></span></p>
+        <div class="bar" style="margin-top:10px;"><div class="bar-inner pink" id="barC"></div></div>
+        <p class="dim">多维宇宙平行人格检索... <span id="txtC"></span></p>
+        <div class="bar" style="margin-top:10px;"><div class="bar-inner" id="barD"></div></div>
+        <p class="dim">社交媒体数字脚印追踪... <span id="txtD"></span></p>
+      </div>
+    `);
+    var ta = [
+      [80, 'barA', 'txtA', '发现搞笑基因片段 #233'],
+      [60, 'barB', 'txtB', '检测到超强抽象思维波'],
+      [92, 'barC', 'txtC', '平行宇宙中共有 666 个你在吃瓜'],
+      [99, 'barD', 'txtD', '你的沙雕指数超越全网 99.9% 用户'],
+    ];
+    ta.forEach(function(a, i) {
+      setTimeout(function() {
+        document.getElementById(a[1]).style.width = a[0] + '%';
+        document.getElementById(a[2]).textContent = a[3];
+      }, i * 800);
+    });
+    setTimeout(s8, ta.length * 800 + 1000);
+  };
+
+  // ====== S8: 结果页面-第一部分 ======
+  function s8() {
+    h(`
+      <div class="card center fade-in" style="border-color:#f0f;">
+        <p class="rainbow" style="font-size:28px;font-weight:bold;">🎯 分析结果 🎯</p>
+      </div>
+      <div class="card pink center fade-in">
+        <p class="em" style="color:#fff;">受检人：<span style="font-size:22px;color:#ff0;font-weight:bold;">${userName}</span></p>
+        <div style="margin:14px 0;font-size:14px;line-height:2;">
+          <p>🧬 可爱基因：<span style="color:#f0f;">超标 999%</span></p>
+          <p>🧠 抽象等级：<span style="color:#0ff;">SSS+ (满级)</span></p>
+          <p>😂 幽默指数：<span style="color:#ff0;">溢出屏幕</span></p>
+          <p>🦄 独特程度：<span style="color:#0f0;">宇宙唯一</span></p>
+          <p>👑 综合评定：<span style="font-size:20px;font-weight:bold;color:#f0f;">人类高质量模因携带者</span></p>
+        </div>
+      </div>
+      <button class="btn pink huge" onclick="s9()">💎 点击领取你的专属称号</button>
+    `);
+  };
+
+  // ====== S9: 随机搞笑称号 ======
+  function s9() {
+    var titles = [
+      '宇宙无敌抽象派掌门人 🌌',
+      '互联网冲浪一级运动员 🏄',
+      '深夜emo冠军 + 白日梦大师 🌙',
+      '赛博世界首席搞笑官 🃏',
+      '人类表情包非遗传承人 🎭',
+      '国际认证沙雕艺术家 🗿',
+      '全球抽象文化推广大使 🌍',
+      '五星级吃瓜群众认证 🍉',
+      '资深摸鱼学博士生导师 🐟',
+      '模因病毒自然携带者 🧬',
+      '互联网嘴替特级专家 👄',
+      '脑回路清奇协会会长 🌀',
+      '废话文学终身成就奖 📜',
+      '朋友圈脱口秀首席编剧 🎤',
+    ];
+    var rand = titles[Math.floor(Math.random() * titles.length)];
+
+    h(`
+      <div class="card center fade-in zoom-in" style="border-color:#f0f;">
+        <p class="em" style="color:#fff;">🏆 恭喜 ${userName} 获得：</p>
+        <p style="font-size:24px;font-weight:bold;margin:16px 0;line-height:1.5;" class="rainbow">
+          ${rand}
+        </p>
+        <p class="dim">此称号已上传区块链永久存证</p>
+        <p class="dim">证书编号：#${Math.floor(Math.random() * 999999999)}</p>
+      </div>
+      <button class="btn btn huge" onclick="s10()">🎁 还有隐藏彩蛋</button>
+    `);
+  };
+
+  // ====== S10: 彩蛋-整蛊证书 ======
+  function s10() {
+    h(`
+      <div class="card center fade-in" style="border-color:#ff0;">
+        <p class="emoji-row">📜🎓👑</p>
+        <p class="em" style="color:#ff0;">经全球抽象协会一致认定</p>
+        <p style="font-size:18px;font-weight:bold;color:#fff;margin:12px 0;line-height:2;">
+          ${userName} 同志<br>
+          因「抽象能力突出、搞笑天赋异禀、<br>
+          精神状态遥遥领先」<br>
+          特授予：
+        </p>
+        <p class="rainbow" style="font-size:22px;font-weight:bold;margin:12px 0;">
+          终身抽象VIP荣誉称号
+        </p>
+        <p class="dim">发证单位：银河系抽象管理局</p>
+        <p class="dim">有效期：直到宇宙毁灭</p>
+        <p class="dim">防伪码：${Math.random().toString(36).substring(2, 15).toUpperCase()}</p>
+      </div>
+      <button class="btn yellow huge" onclick="s11()">🎰 试试手气！</button>
+      <button class="btn pink" onclick="location.reload()">🔄 换个人再测</button>
+    `);
+  };
+
+  // ====== S11: 抽签小互动 ======
+  function s11() {
+    var fortunes = [
+      ['🌟', '今天会有人请你喝奶茶！'],
+      ['🍀', '本周必有好事发生！'],
+      ['💸', '即将捡到钱（金额不超过5毛）'],
+      ['😴', '今晚会做一个特别离谱的梦'],
+      ['📱', '手机电量再也不会低于20%'],
+      ['🌈', '未来一周你的运气是：SSR级'],
+      ['👻', '深夜外卖永远不会迟到'],
+      ['🎮', '下一局游戏必定MVP'],
+      ['💌', '有人正偷偷夸你可爱'],
+      ['🎯', '你许的愿马上会实现'],
+      ['🦋', '明天出门会遇到惊喜'],
+      ['🔥', '你的社交能量即将爆发'],
+      ['🍕', '最近会吃到超好吃的东西'],
+      ['🎵', '随机播放突然切到最爱的歌'],
+      ['💎', '你是被选中的那个人！'],
+    ];
+    var f = fortunes[Math.floor(Math.random() * fortunes.length)];
+
+    h(`
+      <div class="card center fade-in zoom-in" style="border-color:#ff0;">
+        <p class="big">${f[0]}</p>
+        <p style="font-size:18px;color:#fff;margin:10px 0;line-height:1.6;">${f[1]}</p>
+      </div>
+      <button class="btn yellow huge" onclick="s11()">🔄 再抽一次</button>
+      <button class="btn btn" onclick="location.reload()">🔙 从头开始</button>
+      <p class="dim center" style="margin-top:20px;">本页面纯属娱乐 💕</p>
+    `);
+  };
+
+  s1();
 })();
-
-function showResult() {
-  document.getElementById('phase2').classList.add('hidden');
-  document.getElementById('phase3').classList.remove('hidden');
-}
 </script>
 </body>
 </html>
