@@ -68,11 +68,11 @@
     border-radius:16px;padding:28px 18px;text-align:center;position:relative;overflow:hidden
   }
   .cert::before{
-    content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
-    background:conic-gradient(from 0deg,transparent,rgba(201,168,76,.04),transparent,rgba(201,168,76,.04),transparent);
-    animation:spin 10s linear infinite
+    content:'';position:absolute;top:0;left:0;width:100%;height:100%;
+    border:2px solid rgba(201,168,76,.15);border-radius:16px;
+    animation:certPulse 2s ease-in-out infinite;pointer-events:none
   }
-  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes certPulse{0%,100%{opacity:.3}50%{opacity:.8}}
   .cert-body{position:relative;z-index:1}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 </style>
