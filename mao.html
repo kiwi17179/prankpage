@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>职场行为评估</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,'SF Pro Display','PingFang SC','Microsoft YaHei',sans-serif;
+  background:#f5f5f7;color:#1d1d1f;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:24px 16px;
+}
+.wrap{width:100%;max-width:440px}
+.card{
+  background:#fff;border-radius:16px;padding:24px 20px;margin:12px 0;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);
+}
+.meta{font-size:13px;color:#86868b;text-align:center;margin-bottom:4px}
+.title{font-size:22px;font-weight:700;color:#1d1d1f;text-align:center;margin-bottom:4px}
+.sub{font-size:14px;color:#86868b;text-align:center;line-height:1.6}
+.q{font-size:20px;font-weight:700;color:#1d1d1f;text-align:center;margin-bottom:4px}
+.qsub{font-size:13px;color:#86868b;text-align:center}
+.btn-primary{
+  display:block;width:100%;padding:16px;border:none;border-radius:12px;
+  background:#0071e3;color:#fff;font-size:17px;font-weight:600;
+  cursor:pointer;letter-spacing:0.5px;transition:all .2s;
+  text-align:center;margin-top:8px;
+}
+.btn-primary:hover{background:#0077ed}
+.btn-primary:active{background:#0061c8;transform:scale(.98)}
+.choice{
+  display:block;width:100%;padding:18px 16px;border:1.5px solid #e5e5ea;
+  border-radius:12px;background:#fff;text-align:center;cursor:pointer;
+  transition:all .2s;margin:10px 0;
+}
+.choice:hover{border-color:#c9a84c}
+.choice.selected{border-color:#c9a84c;background:rgba(201,168,76,.04)}
+.choice.locked{border-color:#ff6b6b33}
+.choice .emoji{font-size:32px;margin-bottom:4px}
+.choice .label{font-size:17px;font-weight:700;color:#1d1d1f}
+.choice .hint{font-size:13px;color:#86868b;margin-top:2px}
+.toast{
+  position:fixed;top:20px;left:50%;transform:translateX(-50%);
+  background:rgba(29,29,31,.92);color:#fff;padding:12px 20px;border-radius:20px;
+  font-size:14px;font-weight:500;z-index:999;pointer-events:none;
+  max-width:85%;text-align:center;line-height:1.5;
+  backdrop-filter:blur(20px);
+  animation:toastIn .25s ease, toastOut .25s ease 2.2s forwards;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-16px)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-10px)}}
+.progress-wrap{margin:16px 0 4px}
+.progress-bar{width:100%;height:6px;background:#e5e5ea;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .3s;background:#0071e3;width:0%}
+.progress-label{font-size:12px;color:#86868b;margin-top:6px;text-align:center}
+.fade-in{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.shake{animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
+.g{color:#34c759}.y{color:#ff9500}.r{color:#ff3b30}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin:2px}
+.tag-bad{background:#fff0f0;color:#ff3b30}
+.tag-ok{background:#fff9e6;color:#ff9500}
+.cert-card{
+  background:#fff;border-radius:20px;padding:32px 20px;text-align:center;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+}
+.cert-card .badge{font-size:48px;margin-bottom:8px}
+.cert-card .name{font-size:28px;font-weight:800;color:#1d1d1f;margin:8px 0;letter-spacing:2px}
+.cert-card .award{font-size:22px;font-weight:700;color:#c9a84c;margin:8px 0}
+.cert-card .stats{text-align:left;line-height:2.2;padding:16px;margin:12px 0;background:#f9f9fb;border-radius:12px;font-size:14px}
+.cert-card .comment{padding:12px;background:#fff9e6;border-radius:10px;font-size:13px;color:#666;line-height:1.8;text-align:left}
+.dim{color:#86868b;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div id="toasts"></div>
+<script>
+var A=document.getElementById('app'), T=document.getElementById('toasts');
+
+var clicks1=0,need1=25,moving1=false,done1=false;
+var clicks2=0,need2=22,moving2=false,done2=false;
+
+var roasts1=[
+  '好猫？上周迟到三次，全勤奖扣光，还好意思说自己是猫',
+  '你同事对你的定义：人还行，就是长了一张甩锅的嘴和一双摸鱼的手',
+  '好猫不会把「我马上做」翻译成「明天下午再说」',
+  '你的核心竞争力：能在任何一项任务里精准找到可以偷懒的环节',
+  '好猫？你问问你领导，他血压高是谁贡献的',
+  '每天踩点上班踩点下班，多待一分钟都觉得自己在无偿加班——你这叫好猫？',
+  '你的工作方法论：用20%的时间干活，用80%的时间让自己看起来很忙',
+  '好猫不会在周报里把一周做的事情拆成四十条——每一条都是一个标点符号级别的进展',
+  '你上个月实际产出折算成工作时长：够不上一个996的零头',
+  '你最大的职场技能：在领导路过工位时迅速切换屏幕的能力无人能及',
+  '好猫？你是好猫的话，公司茶水间的速溶咖啡都比你有产出',
+  '同事群你发言最多的时候——约饭、拼奶茶、吐槽领导，跟工作有关的：零',
+  '你的钉钉签名写的是什么来着，「天道酬勤」——你是不是对勤有什么误解',
+  '项目deadline前一天你是全公司最忙的人，前三十天你是全公司最闲的人',
+  '好猫不会把领导交代的三件事合并成一件，再把这一件拖到下周',
+  '你的Excel技能巅峰：把别人的表格复制过来改个名字交上去',
+  '好猫？你那点小聪明全花在怎么少干活多拿钱了，资本家看了都流泪',
+  '别人加班是真的有活干，你加班是因为白天划水太多不得不补——这能一样吗',
+  '每个月发工资那天你特别积极，干活那天你特别消极——这落差你自己品',
+  '好猫不会在会议上点头如捣蒜，会后一个任务都不推进',
+  '你的KPI全靠同事背着——没有同事帮忙你早被优化了',
+  '你以为领导不知道你在摸鱼？领导只是觉得换掉你的成本比容忍你更高',
+  '好猫？再给你一次机会——算了给多少次都一样',
+  '你的年度关键词：迟到、摸鱼、甩锅、已读不回、等下班',
+  '差不多得了，你手指不酸我看得都酸了——上班都没这么累吧？'
+];
+
+var roasts2=[
+  '勤恳？你上个月完成的三个任务里有两个是别人帮你收的尾',
+  '爱岗敬业的人不会把午休延长到下午两点——你那叫午睡不是午休',
+  '你的「勤恳」主要体现在每天准时打开电脑——然后开始刷微博',
+  '敬业？你对公司最大的付出就是把公司的免费咖啡喝到了个人年度最高纪录',
+  '勤勤恳恳摸鱼，兢兢业业甩锅——这才是你的真实职业画像',
+  '你的日报和周报之间的逻辑关系，爱因斯坦来了也看不懂',
+  '别人上班带饭，你上班带充电宝——因为手机要刷一整天',
+  '爱岗？你对工位最深的感情是把它改造成了第二张床',
+  '勤恳？看一下你的Git提交记录——半年五条，三条是merge',
+  '你的工作效率：周一周二缓冲，周三开始焦虑，周四下午开始干活，周五疯狂赶工',
+  '敬业？你连公司内网OA密码都能忘——因为根本不怎么登录',
+  '你的会议纪要水平：把别人说的话总结成一句话——「领导说了很多」',
+  '勤恳这个词看到你都得绕着走——怕被你碰瓷',
+  '别人摸鱼是间隙摸，你是间隙干活——主次分得很清楚',
+  '你的最强职场技能：能在任何deadline面前保持惊人的心理素质（因为根本不在乎）',
+  '爱岗敬业你确实做到了——爱岗：爱下班；敬业：敬而远之',
+  '你上次主动揽活是哪年的事？——系统时间已溢出，无法计算',
+  '别点了，你的工作表现在HR那里早就归档了——档案标题：建议观察',
+  '行吧，勤恳——仅限于点这个按钮的频率，上班要是有这一半积极性你就升职了',
+  '你赢了，但你的工资单可能不同意这个结果'
+];
+
+function toast(msg){
+  var t=document.createElement('div');t.className='toast';t.textContent=msg;
+  T.appendChild(t);setTimeout(function(){t.remove()},2600);
+}
+
+function page_intro(){
+  A.innerHTML=`
+    <div class="card fade-in" style="text-align:center">
+      <div class="meta">职场综合行为评估系统</div>
+      <div class="title">受评人：李*轩</div>
+      <div class="sub">评估数据源：考勤记录 · 钉钉在线时长 · 同事匿名评价 · Git提交日志 · HR印象</div>
+    </div>
+    <div class="card fade-in">
+      <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <span class="tag tag-bad">出勤异常</span><span class="tag tag-bad">产出偏低</span><span class="tag tag-ok">嘴很皮</span><span class="tag tag-bad">甩锅熟练</span>
+      </div>
+      <div class="sub">本次评估包含两项选择题，请如实作答。<br>数据将不会提交HR——因为HR早就知道了。</div>
+    </div>
+    <button class="btn-primary" onclick="page_q1()" style="font-size:16px">开始评估 →</button>
+    <p class="dim" style="text-align:center;margin-top:12px">成年人专属 · 感情不够深做不出这玩意</p>
+  `;
+}
+
+function page_q1(){
+  clicks1=0;moving1=false;done1=false;
+  A.innerHTML=`
+    <div class="card fade-in">
+      <div class="meta">第一题 · 自我认知</div>
+      <div class="q">🐱 什么猫？</div>
+      <div class="qsub">根据你在职场的日常表现，选择最匹配的品种</div>
+    </div>
+    <div class="choice fade-in" id="c1a" onclick="pick_dumb()">
+      <div class="emoji">😼</div>
+      <div class="label" style="color:#ff3b30">蠢 猫</div>
+      <div class="hint">诚实认领，至少说明你还有自知之明</div>
+    </div>
+    <div style="min-height:80px;display:flex;align-items:center;justify-content:center;position:relative;margin:10px 0" id="zone1">
+      <div class="choice locked" id="c1b" onclick="pick_good(event)" style="width:100%">
+        <div class="emoji">😇</div>
+        <div class="label" style="color:#34c759">好 猫</div>
+        <div class="hint">谨慎选择——系统将调取所有考勤数据进行比对</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="prog1"></div></div>
+      <div class="progress-label" id="lbl1">还需 <b>${need1}</b> 次「好猫」以确认你不是在嘴硬</div>
+    </div>
+  `;
+}
+
+function pick_dumb(){
+  if(done1)return;done1=true;
+  var c=document.getElementById('c1a');c.classList.add('selected');
+  toast('至少你诚实。蠢不可怕，蠢而不自知才可怕——等等，这是在骂你还是夸你？');
+  setTimeout(function(){page_q2()},700);
+}
+
+function pick_good(e){
+  if(e)e.preventDefault();if(done1||moving1)return;moving1=true;
+  clicks1++;
+  toast(roasts1[(clicks1-1)%roasts1.length]);
+  var rem=need1-clicks1;if(rem<0)rem=0;
+  var p=document.getElementById('prog1'),l=document.getElementById('lbl1');
+  if(p)p.style.width=(clicks1/need1*100)+'%';
+  if(l){
+    if(rem<=0)l.innerHTML='<span class="g">…算了，给你过吧。但你自己心里清楚</span>';
+    else if(clicks1>=18)l.innerHTML='还需 <span class="y"><b>'+rem+'</b></span> 次。快结束了，你上班都没这么努力过';
+    else if(clicks1>=10)l.innerHTML='还需 <span class="y"><b>'+rem+'</b></span> 次。继续。你的嘴硬程度正在刷新纪录';
+    else l.innerHTML='还需 <b>'+rem+'</b> 次。明知自己不配还要点，勇气可嘉';
+  }
+  if(clicks1>=need1){
+    done1=true;
+    var c=document.getElementById('c1b');
+    c.classList.remove('locked');c.classList.add('selected');
+    c.querySelector('.hint').textContent='行吧，算你过了——虽然你我都知道这是假的';
+    c.onclick=function(){page_q2();};
+    moving1=false;return;
+  }
+  var dz=document.getElementById('zone1'),gc=document.getElementById('c1b');
+  var s=Math.max(.28,1-clicks1*.028);gc.style.transform='scale('+s+')';
+  var mx=Math.max(dz.clientWidth-gc.offsetWidth*s,50);
+  var my=Math.max(dz.clientHeight-gc.offsetHeight*s,30);
+  gc.style.position='relative';gc.style.left=((Math.random()-.5)*mx*1.3)+'px';
+  gc.style.top=((Math.random()-.5)*my*1.3)+'px';
+  dz.classList.add('shake');setTimeout(function(){dz.classList.remove('shake')},350);
+  setTimeout(function(){moving1=false},240);
+}
+
+function page_q2(){
+  clicks2=0;moving2=false;done2=false;
+  A.innerHTML=`
+    <div class="card fade-in">
+      <div class="meta">✓ 第一题完成</div>
+      <div class="sub" style="margin-top:4px">（虽然结果你自己都不一定信）</div>
+    </div>
+    <div class="card fade-in">
+      <div class="meta">第二题 · 工作态度</div>
+      <div class="q">💼 以下哪项最符合<br>李*轩的工作日常？</div>
+    </div>
+    <div class="choice fade-in" id="c2a" onclick="pick_slack()">
+      <div class="emoji">🦥</div>
+      <div class="label" style="color:#ff3b30">带薪摸鱼三小时，甩锅行云流水</div>
+      <div class="hint">坦荡面对真实的自己</div>
+    </div>
+    <div style="min-height:90px;display:flex;align-items:center;justify-content:center;position:relative;margin:10px 0" id="zone2">
+      <div class="choice locked" id="c2b" onclick="pick_hard(event)" style="width:100%">
+        <div class="emoji">🏆</div>
+        <div class="label" style="color:#34c759">勤勤恳恳，爱岗敬业如劳模</div>
+        <div class="hint">你确定？钉钉数据可能不支持这个选项</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="prog2"></div></div>
+      <div class="progress-label" id="lbl2">还需 <b>${need2}</b> 次「勤恳敬业」来检验你的诚实度</div>
+    </div>
+  `;
+}
+
+function pick_slack(){
+  if(done2)return;done2=true;
+  var c=document.getElementById('c2a');c.classList.add('selected');
+  toast('坦荡！摸鱼是打工人的基本素养，承认摸鱼是打工人的高级修养');
+  setTimeout(function(){page_result();},700);
+}
+
+function pick_hard(e){
+  if(e)e.preventDefault();if(done2||moving2)return;moving2=true;
+  clicks2++;
+  toast(roasts2[(clicks2-1)%roasts2.length]);
+  var rem=need2-clicks2;if(rem<0)rem=0;
+  var p=document.getElementById('prog2'),l=document.getElementById('lbl2');
+  if(p)p.style.width=(clicks2/need2*100)+'%';
+  if(l){
+    if(rem<=0)l.innerHTML='<span class="g">算你过了——你上班要有这一半执着早就升职了</span>';
+    else if(clicks2>=15)l.innerHTML='还需 <span class="y"><b>'+rem+'</b></span> 次。手指酸了？上班都没这么累吧';
+    else if(clicks2>=8)l.innerHTML='还需 <span class="y"><b>'+rem+'</b></span> 次。你继续演，我看着';
+    else l.innerHTML='还需 <b>'+rem+'</b> 次。诚实是打工人的基本美德';
+  }
+  if(clicks2>=need2){
+    done2=true;
+    var c=document.getElementById('c2b');
+    c.classList.remove('locked');c.classList.add('selected');
+    c.querySelector('.hint').textContent='自己信吗？算了不问了';
+    c.onclick=function(){page_result();};
+    moving2=false;return;
+  }
+  var dz=document.getElementById('zone2'),hc=document.getElementById('c2b');
+  var s=Math.max(.28,1-clicks2*.032);hc.style.transform='scale('+s+')';
+  var mx=Math.max(dz.clientWidth-hc.offsetWidth*s,50);
+  var my=Math.max(dz.clientHeight-hc.offsetHeight*s,30);
+  hc.style.position='relative';hc.style.left=((Math.random()-.5)*mx*1.3)+'px';
+  hc.style.top=((Math.random()-.5)*my*1.3)+'px';
+  dz.classList.add('shake');setTimeout(function(){dz.classList.remove('shake')},350);
+  setTimeout(function(){moving2=false},240);
+}
+
+function page_result(){
+  document.body.style.background='#f5f5f7';
+  A.innerHTML=`
+    <div class="cert-card fade-in">
+      <div class="badge">📋</div>
+      <div class="dim">职场综合行为评估委员会</div>
+      <div class="dim" style="font-size:12px">同事 · 考勤系统 · Git日志 · 外卖订单 · HR 联合认证</div>
+      <div class="name">李 * 轩</div>
+      <div class="award">「职场滑手」终身荣誉称号</div>
+      <div class="dim">（滑头的滑，不是滑板的滑——虽然你可能滑板也懒得学）</div>
+      <div class="stats">
+        <div>🏅 摸鱼段位：<b style="color:#ff9500">大宗师</b>（建议开宗立派收徒传艺）</div>
+        <div>🏅 甩锅完成率：<b style="color:#ff3b30">98.7%</b>（剩余1.3%是实在甩不掉的）</div>
+        <div>🏅 实际产出/表面忙碌比：<b style="color:#ff3b30">1:53</b></div>
+        <div>🏅 钉钉已读不回：<b style="color:#ff9500">基本操作，无需统计</b></div>
+        <div>🏅 迟到理由库：<b style="color:#ff9500">127条不重样</b>（创部门纪录）</div>
+        <div>🏅 DDL爆发力：<b style="color:#ff3b30">仅限最后90分钟</b>（然后感叹好累）</div>
+        <div>🏅 同事帮忙擦屁股次数：<b style="color:#ff3b30">不可计数</b>（建议请全组吃饭赎罪）</div>
+      </div>
+      <div class="comment">
+        <b>评语：</b>该同事性格活泼，嘴皮子利索，是办公室气氛组核心成员——但KPI不看气氛。脑子转得快，转速主要用于研究如何以最小代价完成任务（以及如何让同事分担代价）。耍小聪明的天赋如果能转化为实际生产力，年薪翻倍指日可待。建议少整活多干活，你的银行卡余额会感谢你。
+      </div>
+      <p class="dim" style="margin-top:12px">证书编号：HR-SLIP-${new Date().getFullYear()}-${String(Math.floor(Math.random()*99+1)).padStart(2,'0')}</p>
+      <p class="dim">有效期至：连续三周不迟到可申请复核</p>
+    </div>
+    <button class="btn-primary" onclick="location.reload()" style="margin-top:16px">🔄 换人再测</button>
+    <p class="dim" style="text-align:center;margin-top:20px">成年人限定 · 友情不够铁做不出这玩意 · 建议截图发他</p>
+  `;
+}
+
+page_intro();
+</script>
+</body>
+</html>
